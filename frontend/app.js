@@ -3,14 +3,11 @@
  * Module dependencies.
  */
 
-var express = require('express')  
+var express = require('express')
+  , routes = require('./routes')
+  , user = require('./routes/user')
   , http = require('http')
-  , path = require('path')
-  , nconf = require('nconf');
-
-nconf.argv().env().file('keys.json');
-
-//console.log(nconf.get('instagramClientId'));
+  , path = require('path');
 
 var app = express();
 
@@ -30,7 +27,8 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-require('./routes/home')(app);
+app.get('/', routes.index);
+app.get('/users', user.list);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
