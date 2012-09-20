@@ -1,12 +1,16 @@
 {
-  "name": "application-name",
+  "name": "wazstagram-frontend",
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node app"
+    "start": "node server"
   },
   "dependencies": {
     "express": "3.0.0rc4",
-    "jade": "*"
+    "jade": "*",
+    "socket.io": "~0.9.10",
+    "nconf": "~0.6.4",
+    "azure": "~0.6.4",
+    "ejs": "~0.8.3"
   }
 }
