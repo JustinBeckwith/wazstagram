@@ -29,8 +29,12 @@ module.exports = function (app, nconf, serviceBusService) {
             var url = "https://api.instagram.com/v1/media/" + img.object_id + "?client_id=" + nconf.get('instagramClientId');
             console.log(url);
             request(url, function (e, r, b) {
-                console.log(b);
-                var message = { body: b };
+                var pic = {
+                    city: req.params.city,
+                    pic: b
+                }
+                console.log(pic);
+                var message = { body: JSON.stringify(pic) };
                 serviceBusService.sendTopicMessage('wazages', message, function (error) {
                     if (error) {
                         console.log('error sending message to topic - ' + error);

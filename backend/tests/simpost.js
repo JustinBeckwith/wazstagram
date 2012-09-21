@@ -18,7 +18,7 @@ var testData = [
 
     console.log(JSON.stringify(testData));
 
-request('http://localhost:16378/newimage/seattle', 
+request('http://localhost:59837/newimage/seattle', 
     { 
         "json": testData, 
         "method": "post" 
