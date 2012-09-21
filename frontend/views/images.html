@@ -4,15 +4,24 @@
         <meta charset="utf-8" />
         <title></title>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
         <script>
-            var socket = io.connect();
-            socket.on('news', function (data) {
-              console.log(data);
-              socket.emit('my other event', { my: 'data' });
-            });
+            $(function () {
+                var socket = io.connect();
+                socket.on('connect', function () {
+                    console.log('connected!');
+                    socket.emit('setCity', { city: 'seattle' });
+                });
+                socket.on('newPic', function (pic) {
+                    console.log('got a new pic!!!')                    
+                    var p = JSON.parse(pic);
+                    console.log(p);
+                    $("#pics").append($("<img src=\"" + p.data.images.low_resolution.url + "\">"));
+                });
+            })            
         </script>
     </head>
     <body>
-
+        <div id="pics"></div>
     </body>
 </html>

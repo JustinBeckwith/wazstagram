@@ -53,11 +53,17 @@ var server = http.createServer(app).listen(app.get('port'), function () {
 });
 
 var io = require('socket.io').listen(server);
-io.sockets.on('connection', function (socket) {
-    console.log('new connection');
-    socket.on('setCity', function (city) {
-        console.log('setting city to ' + city);
-        socket.join(city);
+
+
+//io.configure(function () {
+//  io.set("transports", ["xhr-polling"]);
+//});
+
+
+io.sockets.on('connection', function (socket) {    
+    socket.on('setCity', function (data) {        
+        console.log('new connection: ' + data.city);
+        socket.join(data.city);
     });    
 });
 
@@ -79,12 +85,11 @@ function getFromTheBus() {
                 console.log('ERROR::receiveSubscriptionMessage:: ' + error)
                 throw error;
             }
-        } else {
-            console.log("MESSAGE RECEIVED! \n\n" + JSON.stringify(message));
+        } else {            
             var body = JSON.parse(message.body);
-            console.log(body.city);
-            console.log(body.pic);
-            io.sockets.in(body.city).emit(body.pic);
+            console.log('new pic published from: ' + body.city);            
+            console.log(io.sockets.in(body.city));
+            io.sockets.in(body.city).emit('newPic', body.pic);
         }
         getFromTheBus();
     });
