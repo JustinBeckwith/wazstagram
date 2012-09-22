@@ -34,7 +34,9 @@ module.exports = function (app, nconf, serviceBusService) {
                     pic: b
                 }
                 console.log(pic);
-                var message = { body: JSON.stringify(pic) };
+                var message = { 
+                    body: JSON.stringify(pic)                    
+                };
                 serviceBusService.sendTopicMessage('wazages', message, function (error) {
                     if (error) {
                         console.log('error sending message to topic - ' + error);

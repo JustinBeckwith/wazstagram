@@ -9,11 +9,23 @@
             $(function () {
                 var socket = io.connect();
                 socket.on('connect', function () {
-                    console.log('connected!');
-                    socket.emit('setCity', { city: 'seattle' });
+                    var city = '';
+                    var urlParts = window.location.href.split("/");
+                    for (var i = urlParts.length - 1; i >= 0; i--) {
+                        if (urlParts[i]) {
+                            city = urlParts[i];
+                            break;
+                        }
+                    }
+                    if (!city) {
+                        alert('invalid url!  please give me a city.')
+                    } else {
+                        console.log('getting data for ' + city);
+                        socket.emit('setCity', { city: city });
+                    }
                 });
                 socket.on('newPic', function (pic) {
-                    console.log('got a new pic!!!')                    
+                    console.log('got a new pic!!!')
                     var p = JSON.parse(pic);
                     console.log(p);
                     $("#pics").append($("<img src=\"" + p.data.images.low_resolution.url + "\">"));
