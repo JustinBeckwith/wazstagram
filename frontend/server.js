@@ -87,8 +87,7 @@ function getFromTheBus() {
             }
         } else {            
             var body = JSON.parse(message.body);
-            console.log('new pic published from: ' + body.city);            
-            console.log(io.sockets.in(body.city));
+            console.log('new pic published from: ' + body.city);                        
             io.sockets.in(body.city).emit('newPic', body.pic);
         }
         getFromTheBus();

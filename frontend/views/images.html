@@ -28,7 +28,9 @@
                     console.log('got a new pic!!!')
                     var p = JSON.parse(pic);
                     console.log(p);
-                    $("#pics").append($("<img src=\"" + p.data.images.low_resolution.url + "\">"));
+                    for (var i = 0; i< p.data.length; i++ ) {
+                        $("#pics").append($("<img src=\"" + p.data[i].images.low_resolution.url + "\">"));
+                    }
                 });
             })            
         </script>

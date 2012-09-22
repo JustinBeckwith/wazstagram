@@ -4,9 +4,6 @@ module.exports = function (app, nconf, serviceBusService) {
 
     // home page
     app.get('/', function (req, res) {
-        
-        
-        
         res.render('index', { title: 'Home Page.  ' })
     });
 
@@ -22,28 +19,47 @@ module.exports = function (app, nconf, serviceBusService) {
         res.send(req.query['hub.challenge']);
     });
 
+    var minIds = new Object();
 
     app.post('/newimage/:city', function (req, res) {
         var data = req.body;
+        console.log(data);
         data.forEach(function (img) {
-            var url = "https://api.instagram.com/v1/media/" + img.object_id + "?client_id=" + nconf.get('instagramClientId');
+
+            var lastId = minIds[req.params.city];
+
+            var url = "https://api.instagram.com/v1/geographies/" + img.object_id + "/media/recent?client_id=" + nconf.get('instagramClientId');
+            if (lastId) {
+                url += "&MIN_ID=" + lastId;
+            }
+
             console.log(url);
             request(url, function (e, r, b) {
-                var pic = {
-                    city: req.params.city,
-                    pic: b
-                }
-                console.log(pic);
-                var message = { 
-                    body: JSON.stringify(pic)                    
-                };
-                serviceBusService.sendTopicMessage('wazages', message, function (error) {
-                    if (error) {
-                        console.log('error sending message to topic - ' + error);
-                    } else {
-                        console.log('message sent!');
+                var data = JSON.parse(b);
+                if (data.meta.code == 200) {
+
+                    //var lastRecord = data.data[data.data.length - 1];
+                    var lastId = data.pagination.next_min_id;//lastRecord.id;
+                    console.log('lastId for ' + req.params.city + ' is ' + lastId);
+                    minIds[req.params.city] = lastId;
+
+                    var pic = {
+                        city: req.params.city,
+                        pic: b
                     }
-                })
+                    var message = {
+                        body: JSON.stringify(pic)
+                    };
+                    serviceBusService.sendTopicMessage('wazages', message, function (error) {
+                        if (error) {
+                            console.log('error sending message to topic - ' + error);
+                        } else {
+                            console.log('message sent!');
+                        }
+                    })
+                } else {
+                    console.log("ERROR::getMedia:: " + data.meta.error_message);
+                }
             });
         })
         res.end();
