@@ -30,7 +30,7 @@ module.exports = function (app, nconf, serviceBusService) {
 
             var url = "https://api.instagram.com/v1/geographies/" + img.object_id + "/media/recent?client_id=" + nconf.get('instagramClientId');
             if (lastId) {
-                url += "&MIN_ID=" + lastId;
+                url += "&min_id=" + lastId;
             }
 
             console.log(url);
@@ -38,25 +38,26 @@ module.exports = function (app, nconf, serviceBusService) {
                 var data = JSON.parse(b);
                 if (data.meta.code == 200) {
 
-                    //var lastRecord = data.data[data.data.length - 1];
-                    var lastId = data.pagination.next_min_id;//lastRecord.id;
-                    console.log('lastId for ' + req.params.city + ' is ' + lastId);
-                    minIds[req.params.city] = lastId;
+                    if (data.data && data.data.length > 0) {                        
+                        var lastId = data.data[0].id;
+                        console.log('lastId for ' + req.params.city + ' is ' + lastId);
+                        minIds[req.params.city] = lastId;
 
-                    var pic = {
-                        city: req.params.city,
-                        pic: b
-                    }
-                    var message = {
-                        body: JSON.stringify(pic)
-                    };
-                    serviceBusService.sendTopicMessage('wazages', message, function (error) {
-                        if (error) {
-                            console.log('error sending message to topic - ' + error);
-                        } else {
-                            console.log('message sent!');
+                        var pic = {
+                            city: req.params.city,
+                            pic: b
                         }
-                    })
+                        var message = {
+                            body: JSON.stringify(pic)
+                        };
+                        serviceBusService.sendTopicMessage('wazages', message, function (error) {
+                            if (error) {
+                                console.log('error sending message to topic! \n' + JSON.stringify(error));
+                            } else {
+                                console.log('message sent!');
+                            }
+                        })
+                    }
                 } else {
                     console.log("ERROR::getMedia:: " + data.meta.error_message);
                 }

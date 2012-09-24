@@ -9,7 +9,6 @@ module.exports = function (app, nconf, serviceBusService) {
     // instagram get
     app.get('/:city', function (req, res) {
         console.log(req.params.city);
-        //res.end(req.params.city);
         res.render('images.html');
     });
 }

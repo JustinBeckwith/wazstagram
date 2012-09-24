@@ -18,7 +18,7 @@ serviceBusService.createTopicIfNotExists('wazages', function (error) {
     if (!error) {
         console.log('topic wazages created or exists');
     } else {
-        console.log('error creating service topic wazages');
+        console.log('error creating service topic wazages\n' + JSON.stringify(error));
     }
 });
 
