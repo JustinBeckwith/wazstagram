@@ -19,6 +19,8 @@ var serviceBusService = azure.createServiceBusService(sbNamespace, sbKey);
 var subscriptionId = uuid.v4();
 var topicName = "wazages";
 var picCache = new Object();
+var universe = "universe";
+picCache[universe] = [];
 
 serviceBusService.createTopicIfNotExists(topicName, function (error) {
     if (!error) {
@@ -101,7 +103,8 @@ function getFromTheBus() {
             var body = JSON.parse(message.body);
             console.log('new pic published from: ' + body.city);
             cachePic(body.pic, body.city);
-            io.sockets. in (body.city).emit('newPic', body.pic);
+            io.sockets.in(body.city).emit('newPic', body.pic);
+            io.sockets.in(universe).emit('newPic', body.pic);
         }
         getFromTheBus();
     });
@@ -115,10 +118,15 @@ function cachePic(data, city) {
     if (!picCache[city])
         picCache[city] = [];
 
-    // add the picture to the end of the queue
+    // add the picture to the end of the queue for the city and universe
     picCache[city].push(data);
+    picCache[universe].push(data);
 
     // only allow 10 items in the queue per city
     if (picCache[city].length > 10) 
         picCache[city].shift();
+
+    // keep the universe queue down to 10 as well
+    if (picCache[universe].length > 10)
+        picCache[universe].shift();
 }
