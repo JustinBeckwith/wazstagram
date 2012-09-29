@@ -76,8 +76,8 @@ io.sockets.on('connection', function (socket) {
 });
 
 /**
- * create the initial subscription to get events from service bus
- **/
+* create the initial subscription to get events from service bus
+**/
 serviceBusService.createSubscription(topicName, subscriptionId, function (error) {
     if (error) {
         console.log('ERROR::createSubscription:: ' + JSON.stringify(error));
@@ -88,31 +88,36 @@ serviceBusService.createSubscription(topicName, subscriptionId, function (error)
 });
 
 /**
- * poll service bus for new pictures
- **/
+* poll service bus for new pictures
+**/
 function getFromTheBus() {
-    serviceBusService.receiveSubscriptionMessage(topicName, subscriptionId, { timeoutIntervalInS: 5 }, function (error, message) {
-        if (error) {
-            if (error == "No messages to receive") {
-                console.log('no messages...');
+    try {
+        serviceBusService.receiveSubscriptionMessage(topicName, subscriptionId, { timeoutIntervalInS: 5 }, function (error, message) {
+            if (error) {
+                if (error == "No messages to receive") {
+                    console.log('no messages...');
+                } else {
+                    console.log('ERROR::receiveSubscriptionMessage\n ' + JSON.stringify(error))                    
+                }
             } else {
-                console.log('ERROR::receiveSubscriptionMessage\n ' + JSON.stringify(error))
-                throw error;
+                var body = JSON.parse(message.body);
+                console.log('new pic published from: ' + body.city);
+                cachePic(body.pic, body.city);
+                io.sockets. in (body.city).emit('newPic', body.pic);
+                io.sockets. in (universe).emit('newPic', body.pic);
             }
-        } else {
-            var body = JSON.parse(message.body);
-            console.log('new pic published from: ' + body.city);
-            cachePic(body.pic, body.city);
-            io.sockets.in(body.city).emit('newPic', body.pic);
-            io.sockets.in(universe).emit('newPic', body.pic);
-        }
-        getFromTheBus();
-    });
+            getFromTheBus();
+        });
+    } catch (e) {
+        // if something goes wrong, wait a little and reconnect
+        console.log('ERROR::getFromTheBus\n ' + JSON.stringify(e))
+        setTimeout(getFromTheBus, 1000);
+    }
 }
 
 /**
- *  ensures users get an initial blast of 10 images per city
- **/
+*  ensures users get an initial blast of 10 images per city
+**/
 function cachePic(data, city) {
     // initialize the cache if it doesn't exist
     if (!picCache[city])
@@ -123,7 +128,7 @@ function cachePic(data, city) {
     picCache[universe].push(data);
 
     // only allow 10 items in the queue per city
-    if (picCache[city].length > 10) 
+    if (picCache[city].length > 10)
         picCache[city].shift();
 
     // keep the universe queue down to 10 as well
