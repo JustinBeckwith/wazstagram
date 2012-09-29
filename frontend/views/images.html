@@ -8,6 +8,7 @@
         <script>
             $(function () {
                 var socket = io.connect();
+
                 socket.on('connect', function () {
                     var city = '';
                     var urlParts = window.location.href.split("/");
@@ -24,15 +25,27 @@
                         socket.emit('setCity', { city: city });
                     }
                 });
+
                 socket.on('newPic', function (pic) {
                     console.log('got a new pic!!!')
                     var p = JSON.parse(pic);
                     console.log(p);
-                    for (var i = 0; i< p.data.length; i++ ) {
-                        $("#pics").append($("<img src=\"" + p.data[i].images.low_resolution.url + "\">"));
+                    for (var i = 0; i < p.data.length; i++) {
+                        $("#pics").prepend($("<img data-id=\"" + p.data[i].id + "\" src=\"" + p.data[i].images.low_resolution.url + "\">"));
                     }
                 });
-            })            
+
+
+                $("#pics").on("click", "img", function () {
+
+                    var id = $(this).data("id");
+                    console.log(id);
+                    $.ajax("/media/" + id).done(function (data) {
+                        console.log(data);
+                    });
+                });
+
+            });            
         </script>
     </head>
     <body>
