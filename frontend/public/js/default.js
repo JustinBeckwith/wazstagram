@@ -26,7 +26,7 @@
     	});
     	window.Radar = {
     		Browser: {
-    			isMobileQuery: window.msMatchMedia("screen and (max-width: 800px) and (max-height: 1280px)")
+    			isMobileQuery: window.msMatchMedia ? window.msMatchMedia("screen and (max-width: 800px) and (max-height: 1280px)") : false
     		},
     		Components: {
     			ThumbnailViewer: {
@@ -201,7 +201,7 @@
 
     			});
     			this.get('', function () {
-    				if (viewModel.isDetailPicture()) {
+    				if (self.isDetailPicture()) {
     					self.isDetailPicture(false);
     					self.detailPicture(null);
     				}
