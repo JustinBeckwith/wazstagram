@@ -35,31 +35,43 @@ module.exports = function (app, nconf, serviceBusService) {
 
             console.log(url);
             request(url, function (e, r, b) {
-                var data = JSON.parse(b);
-                if (data.meta.code == 200) {
-
-                    if (data.data && data.data.length > 0) {                        
-                        var lastId = data.data[0].id;
-                        console.log('lastId for ' + req.params.city + ' is ' + lastId);
-                        minIds[req.params.city] = lastId;
-
-                        var pic = {
-                            city: req.params.city,
-                            pic: b
-                        }
-                        var message = {
-                            body: JSON.stringify(pic)
-                        };
-                        serviceBusService.sendTopicMessage('wazages', message, function (error) {
-                            if (error) {
-                                console.log('error sending message to topic! \n' + JSON.stringify(error));
-                            } else {
-                                console.log('message sent!');
-                            }
-                        })
-                    }
+                if (e && e != '') {
+                    console.log("ERROR:getMedia::" + e);
+                    console.log("ERROR:getMedia::" + JSON.stringify(e));
                 } else {
-                    console.log("ERROR::getMedia:: " + data.meta.error_message);
+                    var data = null;
+                    try {
+                        data = JSON.parse(b);
+                    } catch (e) {
+                        // if the parse fails, let's find out why...
+                        console.log("ERROR:getMedia::\n" + b);
+                    }
+
+                    if (data.meta.code == 200) {
+
+                        if (data.data && data.data.length > 0) {
+                            var lastId = data.data[0].id;
+                            console.log('lastId for ' + req.params.city + ' is ' + lastId);
+                            minIds[req.params.city] = lastId;
+
+                            var pic = {
+                                city: req.params.city,
+                                pic: b
+                            }
+                            var message = {
+                                body: JSON.stringify(pic)
+                            };
+                            serviceBusService.sendTopicMessage('wazages', message, function (error) {
+                                if (error) {
+                                    console.log('error sending message to topic! \n' + JSON.stringify(error));
+                                } else {
+                                    console.log('message sent!');
+                                }
+                            })
+                        }
+                    } else {
+                        console.log("ERROR::getMedia:: " + data.meta.error_message);
+                    }
                 }
             });
         })
