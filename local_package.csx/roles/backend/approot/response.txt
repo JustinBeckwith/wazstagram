@@ -1,9 +1,0 @@
-
-{"meta":{"code":200},"data":{"object":"geography","object_id":"1465543","aspect":"media","callback_url":"http:\/\/wazstagram.azurewebsites.net\/newimage\/san-francisco","type":"subscription","id":"2365423"}}
-{"meta":{"code":200},"data":{"object":"geography","object_id":"1465542","aspect":"media","callback_url":"http:\/\/wazstagram.azurewebsites.net\/newimage\/new-york","type":"subscription","id":"2365424"}}
-{"meta":{"code":200},"data":{"object":"geography","object_id":"1465544","aspect":"media","callback_url":"http:\/\/wazstagram.azurewebsites.net\/newimage\/seattle","type":"subscription","id":"2365425"}}
-{"meta":{"code":200},"data":{"object":"geography","object_id":"1465541","aspect":"media","callback_url":"http:\/\/wazstagram.azurewebsites.net\/newimage\/pittsburgh","type":"subscription","id":"2365426"}}
-{"meta":{"code":200},"data":{"object":"geography","object_id":"1465540","aspect":"media","callback_url":"http:\/\/wazstagram.azurewebsites.net\/newimage\/los-angeles","type":"subscription","id":"2365427"}}
-{"meta":{"code":200},"data":{"object":"geography","object_id":"1465537","aspect":"media","callback_url":"http:\/\/wazstagram.azurewebsites.net\/newimage\/washington-dc","type":"subscription","id":"2365419"}}
-{"meta":{"code":200},"data":{"object":"geography","object_id":"1465536","aspect":"media","callback_url":"http:\/\/wazstagram.azurewebsites.net\/newimage\/london","type":"subscription","id":"2365420"}}
-{"meta":{"code":200},"data":{"object":"geography","object_id":"1465538","aspect":"media","callback_url":"http:\/\/wazstagram.azurewebsites.net\/newimage\/rome","type":"subscription","id":"2365421"}}
