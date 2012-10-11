@@ -1,0 +1,18 @@
+{
+    "cities": [
+        { "name": "seattle", "lat":"47.606308", "long":"-122.332072" },
+        { "name": "new-york", "lat":"40.714379", "long":"-74.005989"},
+        { "name": "los-angeles", "lat":"34.052304", "long":"-118.243686"},
+        { "name": "pittsburgh", "lat":"40.440709", "long":"-79.995879" },
+        { "name": "san-francisco", "lat":"37.774963", "long":"-122.419433"},
+        { "name": "washington-dc", "lat":"38.895125", "long":"-77.03637"},
+        { "name": "london", "lat":"51.508235", "long":"-0.128023"},
+        { "name": "rome", "lat":"41.901534", "long":"12.460781"}
+    ],
+     
+}
+
+
+
+
+
