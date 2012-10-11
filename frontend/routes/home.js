@@ -19,7 +19,7 @@ module.exports = function (app, nconf, serviceBusService) {
         var url = "https://api.instagram.com/v1/media/" + req.params.id + "/?client_id=" + nconf.get('instagramClientId');
         console.log(url);
         request(url, function (e, r, b) {
-            res.end(b);            
+            res.end(req.query.callback + "(" + b + ");");  
         });
     });
 }
