@@ -3,14 +3,15 @@
 	<head>
 		<title></title>
 		<script src="/socket.io/socket.io.js"></script>
-        <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-		<script src="scripts/knockout-2.1.0.debug.js"></script>
-		<script src="js/default.js"></script>
-		<link href="css/default.css" rel="stylesheet" />
-		<link href="css/fonts.css" rel="stylesheet" />
+        <script src="plugins/jquery-1.8.1.js"></script>
+		<script src="plugins/knockout-2.1.0.js"></script>
+        <script src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
+		<script src="scripts/default.js"></script>
+		<link href="stylesheets/default.css" rel="stylesheet" />
+		<link href="stylesheets/fonts.css" rel="stylesheet" />
 	</head>
 <body>
-	<img class="logo" alt="radar logo" src="imgs/radar-logo.png"/>
+	<img class="logo" alt="radar logo" src="images/radar-logo.png"/>
 	<div id="main" data-bind="css: {mainHidden: isDetailPicture()}">
 		<div class="backdrop" data-bind="style: {backgroundImage: backgroundPicture}" onclick="hideDetails();"></div>
 		<div id="transitionImageDiv" class="backdrop transitionImage hidden"></div>
