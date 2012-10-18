@@ -26,7 +26,7 @@
     	});
     	window.Radar = {
     		Browser: {
-    			isMobileQuery: window.msMatchMedia("screen and (max-width: 800px) and (max-height: 1280px)")
+    			isMobileQuery: window.msMatchMedia ? window.msMatchMedia("screen and (max-width: 800px) and (max-height: 1280px)") : false
     		},
     		Components: {
     			ThumbnailViewer: {
@@ -121,12 +121,100 @@
     		this.nextBackgroundPictureUrl = undefined;
     		this.detailPicture = ko.observable(null);
     		this.isDetailPicture = ko.observable(false);
-
-    		this.addPictureInternal = function (picture) {
+    		this.isMapShown = ko.observable(false);
+    		this.FindPicture = function(fnc) {
+    			var a = this.picturesWithBlanks();
+    			if (!fnc || typeof(fnc) != 'function') {
+    				return null;
+    			}
+    			if (!a || !a.length || a.length < 1) return -1;
+    			for (var i = 0; i < a.length; i++) {
+    				if (fnc(a[i])) return a[i];
+    			}
+    			return null;
+    		};
+    		this.addPictureInternal = function(picture) {
     			self.picturesWithBlanks.unshift(picture);
     			viewModel.updateBlanks(Radar.Components.ThumbnailViewer.pageSize);
     			self.addPushPin(picture, false);
-    		}
+    		};
+    		
+    		this.routes = Sammy(function () {
+    			this.get('#:picture', function () {
+    				var sammy = this;
+
+    				var picture = viewModel.FindPicture(function (pic) {
+    					return pic.id == decodeURIComponent(sammy.params.picture);
+    				});
+
+    				if (picture == undefined || picture.id == null) return;
+    				var onImgLoad = function (imgSrc) {
+    					self.detailPicture(picture);
+    					self.isDetailPicture(true);
+
+    					// make async call to get updated comment and like data
+
+    					var id = picture.id;
+    					var url = "http://waztagram.cloudapp.net/media/" + id + "?callback=?";
+    					$.ajax({
+    						url: url,
+    						dataType: 'JSONP',
+    						type: 'GET',
+    						timeout: 10000,
+    						success: callback,
+    						error: function (data, textStatus, jqXHR) {
+    							console.log("ERROR: " + jqXHR);
+    						}
+    					});
+    				};
+    				fetchImage(picture.images.standard_resolution.url, onImgLoad);
+    				if ($('#map').hasClass('mapShown')) {
+    					$('#map')
+							.addClass("mapHidden").removeClass("mapShown");
+    					self.map.entities.remove(self.fullPushPin);
+    					self.fullPushPin = null;
+    					viewModel.isMapShown(false);
+    					return;
+    				}
+    			});
+    			this.get('#:picture/:map', function () {
+    				var sammy = this;
+    				var picture = viewModel.FindPicture(function (pic) {
+    					return pic.id == decodeURIComponent(sammy.params.picture);
+    				});
+    				if (picture && sammy.params.map == "map") {
+    					if ($('#map').hasClass('mapShown')) {
+    						$('#map')
+								.addClass("mapHidden").removeClass("mapShown");
+    						self.map.entities.remove(self.fullPushPin);
+    						self.fullPushPin = null;
+    						viewModel.isMapShown(false);
+    						return;
+    					}
+
+    					self.addPushPin(self.detailPicture(), true);
+    					self.map.setView({ zoom: 14, center: new Microsoft.Maps.Location(self.detailPicture().location.latitude, self.detailPicture().location.longitude) });
+    					$('#map')
+							.removeClass("mapHidden").addClass("mapShown");
+    					viewModel.isMapShown(true);
+    				}
+
+    			});
+    			this.get('', function () {
+    				if (self.isDetailPicture()) {
+    					self.isDetailPicture(false);
+    					self.detailPicture(null);
+    				}
+    				if ($('#map').hasClass('mapShown')) {
+    					$('#map')
+							.addClass("mapHidden").removeClass("mapShown");
+    					self.map.entities.remove(self.fullPushPin);
+    					self.fullPushPin = null;
+    					viewModel.isMapShown(false);
+    					return;
+    				}
+    			});
+    		}).run();
 
     		this.addPicture = function (id, images, user, caption, location, comments, likes) {
     			var self = this;
@@ -166,27 +254,7 @@
     		};
 
     		this.selectPicture = function (picture) {
-    			if (picture == undefined || picture.id == null) return;
-    			var onImgLoad = function (imgSrc) {
-    				self.detailPicture(picture);
-    				self.isDetailPicture(true);
-
-    				// make async call to get updated comment and like data
-
-    				var id = picture.id;
-    				var url = "http://localhost:3000/media/" + id + "?callback=?";
-    				$.ajax({
-    					url: url,
-    					dataType: 'JSONP',
-    					type: 'GET',
-    					timeout: 10000,
-    					success: callback,
-    					error: function (data, textStatus, jqXHR) {
-    						console.log("ERROR: " + jqXHR);
-    					}
-    				});
-    			};
-    			fetchImage(picture.images.standard_resolution.url, onImgLoad);
+    			location.hash = encodeURIComponent(picture.id);
     		};
 
     		function callback(data, textStatus, jqXHR) {
@@ -197,8 +265,7 @@
     		}
 
     		this.unSelectPicture = function () {
-    			self.isDetailPicture(false);
-    			self.detailPicture(null);
+    			location.hash = "";
     		};
 
     		this.updateBlanks = function (pageSize) {
@@ -232,34 +299,31 @@
     			}
     		};
 
-    		document.onreadystatechange = function () {
+    		document.onreadystatechange = function() {
     			if (this.readyState == 'complete') {
     				var script = document.createElement('script');
     				script.type = 'text/javascript';
     				script.src = 'http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0';
     				document.getElementsByTagName('head')[0].appendChild(script);
-    				script.onreadystatechange = function () {
+    				script.onreadystatechange = function() {
     					if (this.readyState == 'complete') {
     						self.map = new Microsoft.Maps.Map(document.getElementById('myMap'), { credentials: 'Arha1ch48UwizeokfrS6sqAhtuRIwwRZgtI5XHBlQf8gOETZ8G7JEgshVsS8HPJI' });
     					}
     				};
     			}
-    			
-    		}
+
+    		};
 
     		this.showMap = function () {
-    			if ($('#map').hasClass('mapShown')) {
-    				$('#map')
-						.addClass("mapHidden").removeClass("mapShown");
-    				self.map.entities.remove(self.fullPushPin);
-    				self.fullPushPin = null;
+    			if (viewModel.isDetailPicture() && !viewModel.isMapShown()) {
+    				location.hash = viewModel.detailPicture().id + "/map";
     				return;
     			}
-
-    			self.addPushPin(self.detailPicture(), true);
-    			self.map.setView({ zoom: 14, center: new Microsoft.Maps.Location(self.detailPicture().location.latitude, self.detailPicture().location.longitude) });
-    			$('#map')
-					.removeClass("mapHidden").addClass("mapShown");
+    			else if (viewModel.isDetailPicture()) {
+    				location.hash = viewModel.detailPicture().id;
+    				return;
+    			}
+    			location.hash = "";
     		};
 
     		this.fullPushPin = null;
