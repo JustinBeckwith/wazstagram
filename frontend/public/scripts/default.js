@@ -26,7 +26,7 @@
     });
     window.Radar = {
         Browser: {
-            isMobileQuery: false//window.msMatchMedia("screen and (max-width: 800px) and (max-height: 1280px)")
+            isMobileQuery: window.msMatchMedia ? window.msMatchMedia("screen and (max-width: 800px) and (max-height: 1280px)") : false
         },
         Components: {
             ThumbnailViewer: {
@@ -37,7 +37,9 @@
     if (Radar.Browser.isMobileQuery.matches) {
         Radar.Components.ThumbnailViewer.pageSize = 12;
     }
-    //Radar.Browser.isMobileQuery.addListener(mediaSizeChanged);
+    
+    // this breaks in chrome (jb)
+    // Radar.Browser.isMobileQuery.addListener(mediaSizeChanged);
 
 
     var User = function (username, profile_picture, id, full_name) {
@@ -231,24 +233,8 @@
                 self.picturesWithBlanks.push(blank);
             }
         };
-
-        //document.onreadystatechange = function () {
-        //	if (this.readyState == 'complete') {
-        //		var script = document.createElement('script');
-        //		script.type = 'text/javascript';
-        //		script.src = 'http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0';
-        //		document.getElementsByTagName('head')[0].appendChild(script);
-        //		script.onreadystatechange = function () {
-        //			if (this.readyState == 'complete') {
-        //				self.map = new Microsoft.Maps.Map(document.getElementById('myMap'), { credentials: 'Arha1ch48UwizeokfrS6sqAhtuRIwwRZgtI5XHBlQf8gOETZ8G7JEgshVsS8HPJI' });
-        //			}
-        //		};
-        //	}
-        //	
-        //}
-        console.log('here');
-        this.map = new Microsoft.Maps.Map(document.getElementById('myMap'), { credentials: 'Arha1ch48UwizeokfrS6sqAhtuRIwwRZgtI5XHBlQf8gOETZ8G7JEgshVsS8HPJI' });
-        console.log('gone');
+        
+        this.map = new Microsoft.Maps.Map(document.getElementById('myMap'), { credentials: 'Arha1ch48UwizeokfrS6sqAhtuRIwwRZgtI5XHBlQf8gOETZ8G7JEgshVsS8HPJI' });        
 
         this.showMap = function () {
             if ($('#map').hasClass('mapShown')) {
