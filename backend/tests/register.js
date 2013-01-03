@@ -1,10 +1,10 @@
-var cities = require("./cities").cities,
+var cities = require("../cities").cities,
     http = require("http"),
     request = require('request'),
     nconf = require('nconf'),
     util = require('util');
 
-nconf.argv().env().file('keys.json');
+nconf.argv().env().file('../keys.json');
 
 cities.forEach(function (city) {
     
