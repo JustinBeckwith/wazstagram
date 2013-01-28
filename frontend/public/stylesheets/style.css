@@ -1,8 +1,39 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+HTML, BODY {
+    padding: 0px;
+    margin:  0px;
+    background-color: #000;
+    height: 100%;
+    background-image: url(../images/watermark.png);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: right bottom;
 }
 
-a {
-  color: #00B7FF;
+#header {
+    top: 0;
+    width: 100%;
+    background-color: rgba(255, 0, 0, 0.75);
+    height: 50px;
+    position: fixed;
+    z-index: 1;
+    overflow: hidden;
+    background-image: url(../images/subtext.png);
+    background-position: right center;
+    background-repeat: no-repeat;
+}
+
+#header img {
+    margin-top:  10px;
+    margin-left: 10px;
+    border: 0px;
+}
+
+#pics {
+    margin-top:  50px;
+    line-height: 0px;
+}
+
+#pics img {    
+    display: none;
+    padding:  10px;
 }

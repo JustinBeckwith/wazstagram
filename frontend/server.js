@@ -13,7 +13,8 @@ var express = require('express')
   , skywriter = require('winston-skywriter').Skywriter;
 
 
-// read in keys and secrets
+// read in keys and secrets.  You can store these in a variety of ways.  I like to use a keys.json 
+// file that is in the .gitignore file, but you can also store them in the env
 nconf.argv().env().file('keys.json');
 var sbNamespace = nconf.get('AZURE_SERVICEBUS_NAMESPACE');
 var sbKey = nconf.get('AZURE_SERVICEBUS_ACCESS_KEY');
@@ -31,12 +32,10 @@ var logger = new (winston.Logger)({
         })
     ]
 });
-
-
 logger.info('Started wazstagram frontend process');;
 
 
-
+// configure service bus
 var serviceBusService = azure.createServiceBusService(sbNamespace, sbKey);
 var subscriptionId = uuid.v4();
 var topicName = "wazages";
@@ -44,6 +43,7 @@ var picCache = new Object();
 var universe = "universe";
 picCache[universe] = [];
 
+// this application uses a single topic to send service bus messages.  
 serviceBusService.createTopicIfNotExists(topicName, function (error) {
     if (!error) {
         logger.info('topic wazages created or exists');
@@ -52,13 +52,13 @@ serviceBusService.createTopicIfNotExists(topicName, function (error) {
     }
 });
 
+// configure the web server
 var app = express();
 
 app.configure(function () {
     app.set('port', process.env.PORT || 3000);
     app.set('views', __dirname + '/views');
-    app.set('view engine', 'jade');
-    app.engine('html', require('ejs').renderFile);
+    app.set('view engine', 'ejs');
     app.use(express.favicon());
     app.use(express.logger('dev'));
     app.use(express.bodyParser());
@@ -77,14 +77,9 @@ var server = http.createServer(app).listen(app.get('port'), function () {
     logger.info("Express server listening on port " + app.get('port'));
 });
 
+
+// set up socket.io to establish a new connection with each client
 var io = require('socket.io').listen(server);
-
-
-//io.configure(function () {
-//  io.set("transports", ["xhr-polling"]);
-//});
-
-
 io.sockets.on('connection', function (socket) {
     socket.on('setCity', function (data) {
         logger.info('new connection: ' + data.city);
@@ -97,9 +92,8 @@ io.sockets.on('connection', function (socket) {
     });
 });
 
-/**
-* create the initial subscription to get events from service bus
-**/
+
+// create the initial subscription to get events from service bus
 serviceBusService.createSubscription(topicName, subscriptionId, function (error) {
     if (error) {
         logger.error('error creating subscription', error);
@@ -109,9 +103,8 @@ serviceBusService.createSubscription(topicName, subscriptionId, function (error)
     }
 });
 
-/**
-* poll service bus for new pictures
-**/
+
+// poll service bus for new pictures
 function getFromTheBus() {
     try {
         serviceBusService.receiveSubscriptionMessage(topicName, subscriptionId, { timeoutIntervalInS: 5 }, function (error, message) {
@@ -137,9 +130,7 @@ function getFromTheBus() {
     }
 }
 
-/**
-*  ensures users get an initial blast of 10 images per city
-**/
+// ensures users get an initial blast of 10 images per city
 function cachePic(data, city) {
     // initialize the cache if it doesn't exist
     if (!picCache[city])
@@ -150,10 +141,10 @@ function cachePic(data, city) {
     picCache[universe].push(data);
 
     // only allow 10 items in the queue per city
-    if (picCache[city].length > 10)
+    if (picCache[city].length > 150)
         picCache[city].shift();
 
     // keep the universe queue down to 10 as well
-    if (picCache[universe].length > 10)
+    if (picCache[universe].length > 150)
         picCache[universe].shift();
 }
