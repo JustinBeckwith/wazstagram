@@ -1,70 +1,54 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<title></title>
-		<script src="/socket.io/socket.io.js"></script>
-        <script src="plugins/jquery-1.8.1.js"></script>
-		<script src="plugins/knockout-2.1.0.js"></script>
-        <script src="plugins/sammy-latest.min.js"></script>
-        <script src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=7.0"></script>
-		<script src="scripts/default.js"></script>        
-		<link href="stylesheets/default.css" rel="stylesheet" />
-		<link href="stylesheets/fonts.css" rel="stylesheet" />
-	</head>
-<body>
-	<img class="logo" alt="radar logo" src="images/radar-logo.png"/>
-	<div id="main" data-bind="css: {mainHidden: isDetailPicture()}">
-		<div class="backdrop" data-bind="style: {backgroundImage: backgroundPicture}" onclick="hideDetails();"></div>
-		<div id="transitionImageDiv" class="backdrop transitionImage hidden"></div>
-		<div class="thumbnailViewer" data-bind="foreach: picturesWithBlanks" onclick="hideDetails();">
-			<div class="thumbnail" data-bind="click: $parent.selectPicture, style: {backgroundImage: 'url(' + images.thumbnail.url + ')'}"></div>
-		</div>
-	</div>
-	
-	<div id="detail" data-bind="css: {detailVisible: isDetailPicture()}">
-		<div id="detailBackdrop" data-bind="css: {detailBackdrop: isDetailPicture()}, style: {backgroundImage: isDetailPicture() ? 'url(' + detailPicture().images.standard_resolution.url + ')' : 'none'}, click: unSelectPicture"></div>
-		<div id="detailSideBar" data-bind="with: detailPicture">
-			<div class="icon-bar">
-				<div class="button">
-					<div><span class="foundicon-heart"></span></div>
-					<div class="button-counter-text"><span data-bind="text: likes().length"></span></div>
-				</div>
-				<div class="button" onclick="toggleExpandDetails();">
-					<div class="foundicon-chat"></div>
-					<div class="button-counter-text"><span data-bind="text: comments().length"></span></div>
-				</div>
-				<div class="button">
-					<div class="foundicon-location" data-bind="style: {visibility: location != null ? 'visible' : 'hidden'}, click: $root.showMap"></div>
-				</div>
-			</div>
-			<div class="data-bar">
-				<div class="likes-panel" data-bind="foreach: likes">
-					<img class="like" data-bind="attr: { src: profile_picture }"/>
-				</div>
-				<div data-bind="foreach: comments">
-						<div class="comment">
-							<div class="thumb">
-								<img data-bind="attr: { src: from.profile_picture }" />
-							</div>
-							<div class="content">
-								<span class="username" data-bind="text: from.username"></span>
-								<div class="time">
-									<span>4 mins.</span>
-								</div>
-							</div>
-							<div class="text">
-								<span data-bind="text: text"></span>
-							</div>
-						</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title></title>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+        <script>
+            $(function () {
+                var socket = io.connect();
 
-	<div id="map" class="mapView mapHidden">
-		<div id="mapBackdrop">
-			<div id='myMap'></div>
-	</div>
-	</div>
-</body>
+                socket.on('connect', function () {
+                    var city = '';
+                    var urlParts = window.location.href.split("/");
+                    for (var i = urlParts.length - 1; i >= 0; i--) {
+                        if (urlParts[i]) {
+                            city = urlParts[i];
+                            break;
+                        }
+                    }
+                    if (!city) {
+                        alert('invalid url!  please give me a city.')
+                    } else {
+                        console.log('getting data for ' + city);
+                        socket.emit('setCity', { city: city });
+                    }
+                });
+
+                socket.on('newPic', function (pic) {
+                    console.log('got a new pic!!!')
+                    var p = JSON.parse(pic);
+                    console.log(p);
+                    for (var i = 0; i < p.data.length; i++) {
+                        $("#pics").prepend($("<img data-id=\"" + p.data[i].id + "\" src=\"" + p.data[i].images.low_resolution.url + "\">"));
+                    }
+                });
+
+
+                $("#pics").on("click", "img", function () {
+
+                    var id = $(this).data("id");
+                    console.log(id);
+                    $.ajax("/media/" + id).done(function (data) {
+                        console.log(data);
+                    });
+                });
+
+            });            
+        </script>
+    </head>
+    <body>
+        <div id="pics"></div>
+    </body>
 </html>
