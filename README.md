@@ -1,5 +1,5 @@
 
-![WAZSTAGRAM](https://github.com/JustinBeckwith/wazstagram/blob/master/waz-logo.png "WAZSTAGRAM")
+![WAZSTAGRAM](https://raw.github.com/JustinBeckwith/wazstagram/master/waz-logo.png "WAZSTAGRAM")
 ***
 
 [Wazstagram](http://wazstagram.cloudapp.net/) is a fun experiment with node.js on [Windows Azure](http://www.windowsazure.com/en-us/develop/nodejs/) and the [Instagram Realtime API](http://instagram.com/developer/realtime/).  The project uses various services in Windows Azure to create a scalable window into Instagram traffic across multiple cities.
@@ -7,7 +7,7 @@
 ### How does it work
 The application is written in node.js, using cloud services in Windows Azure.  A scalable set of backend nodes receive messages from the Instagram Realtime API.  Those messages are sent to the front end nodes using [Windows Azure Service Bus](http://msdn.microsoft.com/en-us/library/hh690929.aspx).  The front end nodes are running node.js with [express](http://expressjs.com/) and [socket.io](http://socket.io/). 
 
-![WAZSTAGRAM Architecture](https://github.com/JustinBeckwith/wazstagram/blob/master/architecture.png "WAZSTAGRAM Architecture")
+![WAZSTAGRAM Architecture](https://raw.github.com/JustinBeckwith/wazstagram/master/architecture.png "WAZSTAGRAM Architecture")
 
 
 ### Websites, Virtual Machines, and Cloud Services - OH MY!!!1
