@@ -1,18 +1,20 @@
 
-![WAZSTAGRAM](https://raw.github.com/JustinBeckwith/wazstagram/master/waz-logo.png "WAZSTAGRAM")
+[![WAZSTAGRAM][2]][1]
+
+  [1]: http://wazstagram.cloudapp.net/
+  [2]: https://raw.github.com/JustinBeckwith/wazstagram/master/waz-logo.png (View the Demo)
 
 ***
 
 [Wazstagram](http://wazstagram.cloudapp.net/) is a fun experiment with node.js on [Windows Azure](http://www.windowsazure.com/en-us/develop/nodejs/) and the [Instagram Realtime API](http://instagram.com/developer/realtime/).  The project uses various services in Windows Azure to create a scalable window into Instagram traffic across multiple cities.
 
-***
 
 ## How does it work
 The application is written in node.js, using cloud services in Windows Azure.  A scalable set of backend nodes receive messages from the Instagram Realtime API.  Those messages are sent to the front end nodes using [Windows Azure Service Bus](http://msdn.microsoft.com/en-us/library/hh690929.aspx).  The front end nodes are running node.js with [express](http://expressjs.com/) and [socket.io](http://socket.io/). 
 
 ![WAZSTAGRAM Architecture](https://raw.github.com/JustinBeckwith/wazstagram/master/architecture.png "WAZSTAGRAM Architecture")
 
-## Websites, Virtual Machines, and Cloud Services, oh my.
+## Websites, and Virtual Machines, and Cloud Services, Oh My!
 
 One of the first things you need to grok when using Windows Azure is the different options you have for your runtimes.  Windows Azure supports three distinct models, which can be mixed and matched depending on what you're trying to accomplish:
 
@@ -47,7 +49,7 @@ The [azure npm module](https://npmjs.org/package/azure) provides the basis for a
 `npm install azure`
 
 
-****
+After you have the azure module, you're ready to rock.
 
 
 ## The Backend
@@ -195,8 +197,6 @@ The [frontend](https://github.com/JustinBeckwith/wazstagram/tree/master/frontend
 	    }
 	}
 	```
-
-****
 
 ## Learning 
 The whole point of writing this code for me was to explore building performant apps that used a rate limited API for data.  Hopefully this model can effectively be used to accept data from any API responsibly, and scale it out to a number of connected clients to a single service.  If you have any ideas on how to make this app better, please let me know, or submit a PR!
