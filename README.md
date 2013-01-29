@@ -4,8 +4,6 @@
   [1]: http://wazstagram.cloudapp.net/
   [2]: https://raw.github.com/JustinBeckwith/wazstagram/master/waz-logo.png (View the Demo)
 
-***
-
 [Wazstagram](http://wazstagram.cloudapp.net/) is a fun experiment with node.js on [Windows Azure](http://www.windowsazure.com/en-us/develop/nodejs/) and the [Instagram Realtime API](http://instagram.com/developer/realtime/).  The project uses various services in Windows Azure to create a scalable window into Instagram traffic across multiple cities.
 
 
@@ -56,7 +54,8 @@ After you have the azure module, you're ready to rock.
 
 The [backend](https://github.com/JustinBeckwith/wazstagram/tree/master/backend) part of this project is a worker role that accepts HTTP Post messages from the Instagram API.  The idea is that their API batches messages, and sends them to an endpoint you define.  Here's [some details](http://instagram.com/developer/realtime/) on how their API works.  I chose to use [express](http://expressjs.com/) to build out the backend routes, because it's convenient.  There are a few pieces to the backend that are interesting:
 
-1. Use [nconf](https://github.com/flatiron/nconf) to store secrets.  Look at the .gitignore.
+1. ##### Use [nconf](https://github.com/flatiron/nconf) to store secrets.  Look at the .gitignore.
+
 	If you're going to build a site like this, you are going to need to store a few secrets.  The backend includes things like the Instagram API key, my Windows Azure Storage account key, and my Service Bus keys.  I create a keys.json file to store this, though you could add it to the environment.  I include an example of this file with the project.  **DO NOT CHECK THIS FILE INTO GITHUB!**  Seriously, [don't do that](https://github.com/blog/1390-secrets-in-the-code).  Also, pay **close attention** to my [.gitignore file](https://github.com/JustinBeckwith/wazstagram/blob/master/.gitignore).  You don't want to check in any *.cspkg or *.csx files, as they contain archived versions of your site that are generated while running the emulator and deploying.  Those archives contain your keys.json file.  That having been said - nconf does makes it really easy to read stuff from your config:
 
 	```javascript
@@ -68,7 +67,8 @@ The [backend](https://github.com/JustinBeckwith/wazstagram/tree/master/backend) 
 	var stKey = nconf.get('AZURE_STORAGE_KEY');
 	```
 
-2. Use [winston](https://github.com/flatiron/winston) and [winston-skywriter](https://github.com/pofallon/winston-skywriter) for logging
+2. ##### Use [winston](https://github.com/flatiron/winston) and [winston-skywriter](https://github.com/pofallon/winston-skywriter) for logging.
+
 	The cloud presents some challenges at times.  Like *how do I get console output* when something goes wrong.  Every node.js project I start these days, I just use winston from the get go.  It's awesome because it lets you pick where your console output and logging gets stored.  I like to just pipe the output to console at dev time, and write to [Table Storage](http://www.windowsazure.com/en-us/develop/nodejs/how-to-guides/table-services/) in production.  Here's how you set it up:
 
 	```javascript
@@ -87,7 +87,8 @@ The [backend](https://github.com/JustinBeckwith/wazstagram/tree/master/backend) 
 	logger.info('Started wazstagram backend');
 	```
 
-3. Use [Service Bus](http://msdn.microsoft.com/en-us/library/ee732537.aspx) - it's pub/sub (+) a basket of kittens
+3. ##### Use [Service Bus](http://msdn.microsoft.com/en-us/library/ee732537.aspx) - it's pub/sub (+) a basket of kittens.
+
 	[Service Bus](http://msdn.microsoft.com/en-us/library/ee732537.aspx) is Windows Azure's swiss army knife of messaging.  I usually use it in the places where I would otherwise use the PubSub features of Redis.  It does all kinds of neat things like [PubSub](http://www.windowsazure.com/en-us/develop/net/how-to-guides/service-bus-topics/), [Durable Queues](http://msdn.microsoft.com/en-us/library/windowsazure/hh767287.aspx), and more recently [Notification Hubs](https://channel9.msdn.com/Blogs/Subscribe/Service-Bus-Notification-Hubs-Code-Walkthrough-Windows-8-Edition).   I use the topic subscription model to create a single channel for messages.  Each worker node publishes messages to a single topic.  Each web node creates a subscription to that topic, and polls for messages.  There's great [support for Service Bus](http://www.windowsazure.com/en-us/develop/nodejs/how-to-guides/service-bus-topics/) in the [Windows Azure Node.js SDK](https://github.com/WindowsAzure/azure-sdk-for-node).  
 
 	To get the basic implementation set up, just follow the [Service Bus Node.js guide](http://www.windowsazure.com/en-us/develop/nodejs/how-to-guides/service-bus-topics/). The interesting part of my use of Service Bus is the subscription clean up.  Each new front end node that connects to the topic creates it's own subscription.  As we scale out and add a new front end node, it creates another subscription.  This is a durable object in Service bus that hangs around after the connection from one end goes away (this is a feature).  To make sure sure you don't leave random subscriptions lying around, you need to do a little cleanup:
@@ -118,7 +119,8 @@ The [backend](https://github.com/JustinBeckwith/wazstagram/tree/master/backend) 
 	}
 	```
 
-4. The [NewImage endpoint](https://github.com/JustinBeckwith/wazstagram/blob/master/backend/routes/home.js)
+4. ##### The [NewImage endpoint](https://github.com/JustinBeckwith/wazstagram/blob/master/backend/routes/home.js)
+
 	All of the stuff above is great, but it doesn't cover what happens when the Instagram API actually hits our endpoint.  The route that accepts this request gets metadata for each image, and pushes it through the Service Bus topic:
 
 	```javascript
@@ -134,7 +136,8 @@ The [backend](https://github.com/JustinBeckwith/wazstagram/tree/master/backend) 
 ## The Frontend
 The [frontend](https://github.com/JustinBeckwith/wazstagram/tree/master/frontend) part of this project is (despite my 'web node' reference) a worker role that accepts accepts the incoming traffic from end users on the site.  I chose to use worker roles because I wanted to take advantage of Web Sockets.  At the moment, Cloud Services Web Roles do not provide that functionality.  I could stand up a VM with Windows Server 8 and IIS 8, but see my aformentioned anxiety about managing my own VMs.  The worker roles use [socket.io](http://socket.io/) and [express](http://expressjs.com) to provide the web site experience.  The front end uses the same NPM modules as the backend:  [express](https://github.com/visionmedia/express/), [winston](https://github.com/flatiron/winston), [winston-skywriter](https://github.com/pofallon/winston-skywriter), [nconf](https://github.com/flatiron/nconf), and [azure](https://github.com/WindowsAzure/azure-sdk-for-node).  In addition to that, it uses [socket.io](http://socket.io/) and [ejs](https://github.com/visionmedia/ejs) to handle the client stuff.  There are a few pieces to the frontend that are interesting:
 
-1. Setting up socket.io
+1. ##### Setting up socket.io
+
 	Socket.io provides the web socket (or xhr) interface that we're going to use to stream images to the client.  When a user initially visits the page, they are going to send a `setCity` call, that lets us know the city to which they want to subscribe (by default all [cities in the system](https://github.com/JustinBeckwith/wazstagram/blob/master/backend/cities.json) are returned).  From there, the user will be sent an initial blast of images that are cached on the server.  Otherwise, you wouldn't see images right away:
 
 	```javascript	
@@ -152,7 +155,8 @@ The [frontend](https://github.com/JustinBeckwith/wazstagram/tree/master/frontend
 	    });
 	});
 	```
-2. Creating a Service Bus Subscription
+2. ##### Creating a Service Bus Subscription
+
 	To receive messages from the worker nodes, we need to create a single subscription for each front end node process.  This is going to create subscription, and start listening for messages:
 
 	```javascript	
@@ -167,7 +171,8 @@ The [frontend](https://github.com/JustinBeckwith/wazstagram/tree/master/frontend
 	});
 	```
 
-3. Moving data between Service Bus and Socket.IO
+3. ##### Moving data between Service Bus and Socket.IO
+
 	As data comes in through the service bus subscription, you need to pipe it up to the appropriate connected clients.  Pay special attention to `io.sockets.in(body.city)` - when the user joined the page, they selected a city.  This call grabs all users subscribed to that city.  The other **important thing to notice** here is the way `getFromTheBus` calls itself in a loop.  There's currently no way to say "just raise an event when there's data" with the Service Bus Node.js implementation, so you need to use this model.  
 
 	```javascript		
