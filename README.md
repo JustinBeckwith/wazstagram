@@ -2,7 +2,7 @@
 [![WAZSTAGRAM][2]][1]
 
   [1]: http://wazstagram.cloudapp.net/
-  [2]: https://raw.github.com/JustinBeckwith/wazstagram/master/waz-logo.png (View the Demo)
+  [2]: http://jbeckwith.com/wp-content/uploads/2013/01/waz-logo.png (View the Demo)
 
 [Wazstagram](http://wazstagram.cloudapp.net/) is a fun experiment with node.js on [Windows Azure](http://www.windowsazure.com/en-us/develop/nodejs/) and the [Instagram Realtime API](http://instagram.com/developer/realtime/).  The project uses various services in Windows Azure to create a scalable window into Instagram traffic across multiple cities.
 
@@ -10,7 +10,7 @@
 ## How does it work
 The application is written in node.js, using cloud services in Windows Azure.  A scalable set of backend nodes receive messages from the Instagram Realtime API.  Those messages are sent to the front end nodes using [Windows Azure Service Bus](http://msdn.microsoft.com/en-us/library/hh690929.aspx).  The front end nodes are running node.js with [express](http://expressjs.com/) and [socket.io](http://socket.io/). 
 
-![WAZSTAGRAM Architecture](https://raw.github.com/JustinBeckwith/wazstagram/master/architecture.png "WAZSTAGRAM Architecture")
+![WAZSTAGRAM Architecture](http://jbeckwith.com/wp-content/uploads/2013/01/architecture.png "WAZSTAGRAM Architecture")
 
 ## Websites, and Virtual Machines, and Cloud Services, Oh My!
 
@@ -31,14 +31,14 @@ After picking your runtime model, the next thing you'll need is some tools.  Bef
 - [PowerShell Cmdlets](http://www.windowsazure.com/en-us/develop/nodejs/how-to-guides/powershell-cmdlets/): these are great if you're on Windows and dig the PowerShell thing.
 - [X-Platform CLI](http://www.windowsazure.com/en-us/manage/linux/other-resources/command-line-tools/):  this tool is interesting because it's written in node, and is available as a node module.  You can actually just `npm install -g azure-cli` and start using this right away.  It looks awesome, though I wish they had kept the flames that were in the first version. 
 
-![X-Plat CLI](https://raw.github.com/JustinBeckwith/wazstagram/master/cli.png "X-Plat CLI")
+![X-Plat CLI](http://jbeckwith.com/wp-content/uploads/2013/01/cli.png "X-Plat CLI")
 
 For this project, I chose to use the PowerShell cmdlets.  I went down this path because the Cloud Services stuff is not currently supported by the X-Platform CLI (I'm hoping this changes).  If you're on MacOS and want to use Cloud Services, you should check out [git-azure](https://github.com/tjanczuk/git-azure).   To bootstrap the project, I pretty much followed the ['Build a Node.js Chat Application with Socket.IO on a Windows Azure Cloud Service' tutorial](http://www.windowsazure.com/en-us/develop/nodejs/tutorials/app-using-socketio/).  This will get all of your scaffolding set up.
 
-### Why not WebMatrix?
+### My node.js editor - WebMatrix 2
 After using the PowerShell cmdlets to scaffold my site, I used [Microsoft WebMatrix](http://www.microsoft.com/web/webmatrix/) to do the majority of the work.  I am very biased towards WebMatrix, as I helped [build the node.js experience](http://jbeckwith.com/2012/06/07/node-js-meet-webmatrix-2/) in it last year.  In a nutshell, it's rad because it has a lot of good editors, and just works.  Oh, and it has IntelliSense for everything:
 
-![I <3 WebMatrix](http://jbeckwith.com/wp-content/uploads/2012/06/thirdpartyintellisense.png "WebMatrix FTW")
+![I <3 WebMatrix](http://jbeckwith.com/wp-content/uploads/2013/01/webmatrix.png "WebMatrix FTW")
 
 
 ### Install the Windows Azure NPM module

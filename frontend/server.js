@@ -77,7 +77,6 @@ var server = http.createServer(app).listen(app.get('port'), function () {
     logger.info("Express server listening on port " + app.get('port'));
 });
 
-
 // set up socket.io to establish a new connection with each client
 var io = require('socket.io').listen(server);
 io.sockets.on('connection', function (socket) {
@@ -91,7 +90,6 @@ io.sockets.on('connection', function (socket) {
         socket.join(data.city);
     });
 });
-
 
 // create the initial subscription to get events from service bus
 serviceBusService.createSubscription(topicName, subscriptionId, function (error) {
