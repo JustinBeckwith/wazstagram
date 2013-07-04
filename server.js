@@ -65,6 +65,11 @@ var server = http.createServer(app).listen(app.get('port'), function () {
 
 // set up socket.io to establish a new connection with each client
 var io = require('socket.io').listen(server);
+
+io.configure(function () {
+    io.set("transports", ["xhr-polling"]);
+});
+
 io.sockets.on('connection', function (socket) {
     socket.on('setCity', function (data) {
         logger.info('new connection: ' + data.city);
