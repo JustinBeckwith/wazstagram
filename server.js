@@ -85,9 +85,9 @@ io.sockets.on('connection', function (socket) {
 // poll service bus for new pictures
 function publishImage(message) {        
     logger.info('new pic published from: ' + message.city);
-    cachePic(message.pic, message.city);
-    io.sockets. in (message.city).emit('newPic', message.pic);
-    io.sockets. in (universe).emit('newPic', message.pic);
+    cachePic(message.pic, message.city);    
+    io.sockets.in (message.city).emit('newPic', message.pic);
+    io.sockets.in (universe).emit('newPic', message.pic);
 }
 
 // ensures users get an initial blast of 10 images per city
