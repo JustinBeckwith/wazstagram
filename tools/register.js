@@ -19,6 +19,8 @@ cities.forEach(function (city) {
         "callback_url": util.format(nconf.get("subscriptionCallbackUrl"), city.name)
     }    
 
+    console.log(options);
+
     request('https://api.instagram.com/v1/subscriptions/', 
         { 
             "form": options, 
