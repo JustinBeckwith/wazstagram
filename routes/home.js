@@ -61,7 +61,7 @@ module.exports = function (app, nconf, logger, publishFunc) {
                                 pic: b
                             }                            
                             
-                            publishFunc.call(pic);
+                            publishFunc.call(this, pic);
                         }
                     } else {
                         logger.error("ERROR::getMedia:: " + data.meta.error_message);
