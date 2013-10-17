@@ -121,7 +121,7 @@ function cachePic(data, city) {
     // if (picCache[universe].length > 150)
     //     picCache[universe].shift();
     console.log("CACHING DATA!!!!")
-    redisClient.lpush("pics", JSON.stringify(data));
+    redisClient.lpush("pics", data);
     redisClient.ltrim("pics", 0, 100);
 }
 
