@@ -19,10 +19,12 @@ var express = require('express')
 nconf.argv().env().file('keys.json');
 var stName = nconf.get('AZURE_STORAGE_NAME');
 var stKey = nconf.get('AZURE_STORAGE_KEY');
-var redisUrl = "redis://redistogo-appharbor:553eee0ecf0a87501f5c67cb4302fc55@angler.redistogo.com:9313/";
+var redisUrl = "hashtagredis.cloudapp.net"; //angler.redistogo.com;
+var redisPassword = "redpolo"; //553eee0ecf0a87501f5c67cb4302fc55
+var redisPort = 10001; //9313
 
-var redisClient = redis.createClient(9313, "angler.redistogo.com"); 
-redisClient.auth("553eee0ecf0a87501f5c67cb4302fc55", function() 
+var redisClient = redis.createClient(redisPort, redisUrl); 
+redisClient.auth(redisPassword, function() 
     {
         console.log("Connected!");
     });
@@ -81,11 +83,12 @@ io.configure(function () {
 io.sockets.on('connection', function (socket) {
     socket.on('setCity', function (data) {
         logger.info('new connection: ' + data.city);
-        // if (picCache[data.city]) {
-        //     for (var i = 0; i < picCache[data.city].length; i++) {
-        //         socket.emit('newPic', picCache[data.city][i]);
-        //     }
-        // }
+        var cachedData = redisClient.lrange("pics", 0, 99);
+        if (cachedData) {
+            for (var i = 0; i < cachedData.length; i++) {
+                socket.emit('newPic', JSON.parse(cachedData[i]));
+            }
+        }
         socket.join(data.city);
     });
 });
@@ -116,7 +119,8 @@ function cachePic(data, city) {
     // if (picCache[universe].length > 150)
     //     picCache[universe].shift();
 
-    redisClient.sadd("pics", JSON.stringify(data));
+    redisClient.lpush("pics", JSON.stringify(data));
+    redisClient.ltrim("pics", 0, 100);
 }
 
 
