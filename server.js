@@ -83,15 +83,16 @@ io.configure(function () {
 io.sockets.on('connection', function (socket) {
     socket.on('setCity', function (data) {
         logger.info('new connection: ' + data.city);
-        var cachedData = redisClient.lrange("pics", 0, 99);
         console.log("GETTTING CACHED DATA!");
-        console.log(redisClient.llen("pics"));
-        if (cachedData) {
-            for (var i = 0; i < cachedData.length; i++) {
-                socket.emit('newPic', JSON.parse(cachedData[i]));
+        redisClient.lrange("pics", 0, 99, function(err, pics) {
+            console.log("LENGTH OF AWESOME ARRAY: " + pics.length);
+            if (pics) {
+                for (var i = 0; i < pics.length; i++) {
+                    socket.emit('newPic', JSON.parse(pics[i]));
+                }
             }
-        }
-        socket.join(data.city);
+            socket.join(data.city);
+        });
     });
 });
 
