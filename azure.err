@@ -1,5 +1,5 @@
-Thu Oct 17 2013 13:41:19 GMT-0700 (Pacific Daylight Time):
-{ [Error: Unable to locate site named wazstagram]
+Thu Oct 17 2013 13:56:40 GMT-0700 (Pacific Daylight Time):
+{ [Error: Unable to locate site named instawesome]
   stack: [Getter/Setter],
   __frame: 
    { name: 'lookupSiteNameAndWebSpace',
@@ -17,7 +17,7 @@ Thu Oct 17 2013 13:41:19 GMT-0700 (Pacific Daylight Time):
      offset: 7,
      col: 4 },
   rawStack: [Getter] }
-Error: Unable to locate site named wazstagram
+Error: Unable to locate site named instawesome
     at ___ (C:\Users\justbe\AppData\Roaming\npm\node_modules\azure-cli\lib\commands\site._js:600:20)
     at ___ (C:\Users\justbe\AppData\Roaming\npm\node_modules\azure-cli\node_modules\streamline\lib\callbacks\runtime.js:85:13)
     at ___ (C:\Users\justbe\AppData\Roaming\npm\node_modules\azure-cli\lib\commands\site._js:1059:131)
