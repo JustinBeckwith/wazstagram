@@ -41,5 +41,5 @@ function readPic() {
     } catch (e) {
         console.log(e);
     }
-    setTimeout(readPic, picBuffer.lenth > 20 ? 100 : 1500);
+    setTimeout(readPic, picBuffer.length > 20 ? 100 : 1500);
 }
