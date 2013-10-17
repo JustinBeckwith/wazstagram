@@ -75,11 +75,11 @@ io.configure(function () {
 io.sockets.on('connection', function (socket) {
     socket.on('setCity', function (data) {
         logger.info('new connection: ' + data.city);
-        if (picCache[data.city]) {
-            for (var i = 0; i < picCache[data.city].length; i++) {
-                socket.emit('newPic', picCache[data.city][i]);
-            }
-        }
+        // if (picCache[data.city]) {
+        //     for (var i = 0; i < picCache[data.city].length; i++) {
+        //         socket.emit('newPic', picCache[data.city][i]);
+        //     }
+        // }
         socket.join(data.city);
     });
 });
