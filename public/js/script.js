@@ -37,9 +37,9 @@ function readPic() {
             });
             $("#pics").prepend($img);
             console.log("QUEUE DRAIN");
-        }
+        } 
     } catch (e) {
         console.log(e);
     }
-    setTimeout(readPic, picCount < 15 ? 100 : 1500);
+    setTimeout(readPic, picCount > 15 ? 100 : 1500);
 }
