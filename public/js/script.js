@@ -12,6 +12,7 @@ $(function () {
 
     socket.on('newPic', function (pic) {
         var p = JSON.parse(pic);
+        console.log("REEEEELEASE THE KRRRAAAAKEN");
         picBuffer = picBuffer.concat(p.data);
     });
 
@@ -35,6 +36,7 @@ function readPic() {
                 if (this.complete) $(this).load();
             });
             $("#pics").prepend($img);
+            console.log("QUEUE DRAIN");
         }
     } catch (e) {
         console.log(e);
