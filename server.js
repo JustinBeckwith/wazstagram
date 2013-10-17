@@ -106,44 +106,7 @@ function publishImage(message) {
 
 // ensures users get an initial blast of 10 images per city
 function cachePic(data, city) {
-    // // initialize the cache if it doesn't exist
-    // if (!picCache[city])
-    //     picCache[city] = [];
-
-    // // add the picture to the end of the queue for the city and universe
-    // picCache[city].push(data);
-    // picCache[universe].push(data);
-
-    // // only allow 10 items in the queue per city
-    // if (picCache[city].length > 150)
-    //     picCache[city].shift();
-
-    // // keep the universe queue down to 10 as well
-    // if (picCache[universe].length > 150)
-    //     picCache[universe].shift();
     console.log("CACHING DATA!!!!")
     redisClient.lpush("pics", data);
-    redisClient.ltrim("pics", 0, 100);
+    redisClient.ltrim("pics", 0, 15);
 }
-
-
-
-
-
-    // // if you'd like to select database 3, instead of 0 (default), call
-    // // client.select(3, function() { /* ... */ });
-
-    // client.on("error", function (err) {
-    //     console.log("Error " + err);
-    // });
-
-    // client.set("string key", "string val", redis.print);
-    // client.hset("hash key", "hashtest 1", "some value", redis.print);
-    // client.hset(["hash key", "hashtest 2", "some other value"], redis.print);
-    // client.hkeys("hash key", function (err, replies) {
-    //     console.log(replies.length + " replies:");
-    //     replies.forEach(function (reply, i) {
-    //         console.log("    " + i + ": " + reply);
-    //     });
-    //     client.quit();
-    // });
