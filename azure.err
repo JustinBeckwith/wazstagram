@@ -1,23 +1,23 @@
-Thu Oct 17 2013 14:08:25 GMT-0700 (Pacific Daylight Time):
-{ [Error: Unable to locate site named instawesome]
+Thu Oct 17 2013 15:57:10 GMT-0700 (Pacific Daylight Time):
+{ [Error: Unable to locate site named wazstagram]
   stack: [Getter/Setter],
   __frame: 
    { name: 'lookupSiteNameAndWebSpace',
      line: 604,
      file: 'C:\\Users\\justbe\\AppData\\Roaming\\npm\\node_modules\\azure-cli\\lib\\commands\\site._js',
      prev: 
-      { name: '__8',
-        line: 699,
+      { name: 'ensureRepositoryUri',
+        line: 678,
         file: 'C:\\Users\\justbe\\AppData\\Roaming\\npm\\node_modules\\azure-cli\\lib\\commands\\site._js',
-        prev: undefined,
+        prev: [Object],
         active: false,
-        offset: 8,
-        col: 10 },
+        offset: 1,
+        col: 19 },
      active: false,
      offset: 7,
      col: 4 },
   rawStack: [Getter] }
-Error: Unable to locate site named instawesome
+Error: Unable to locate site named wazstagram
     at ___ (C:\Users\justbe\AppData\Roaming\npm\node_modules\azure-cli\lib\commands\site._js:600:20)
     at ___ (C:\Users\justbe\AppData\Roaming\npm\node_modules\azure-cli\node_modules\streamline\lib\callbacks\runtime.js:85:13)
     at ___ (C:\Users\justbe\AppData\Roaming\npm\node_modules\azure-cli\lib\commands\site._js:1059:131)
@@ -25,5 +25,6 @@ Error: Unable to locate site named instawesome
     at ___ (C:\Users\justbe\AppData\Roaming\npm\node_modules\azure-cli\lib\commands\site._js:1059:67)
     at site_doSitesGet__18 (C:\Users\justbe\AppData\Roaming\npm\node_modules\azure-cli\lib\commands\site._js:1059:33)
     at lookupSiteNameAndWebSpace (C:\Users\justbe\AppData\Roaming\npm\node_modules\azure-cli\lib\commands\site._js:611:4)
-    at __8 (C:\Users\justbe\AppData\Roaming\npm\node_modules\azure-cli\lib\commands\site._js:707:10)
+    at ensureRepositoryUri (C:\Users\justbe\AppData\Roaming\npm\node_modules\azure-cli\lib\commands\site._js:679:19)
+    at __2 (C:\Users\justbe\AppData\Roaming\npm\node_modules\azure-cli\lib\commands\site.log._js:82:26)
 

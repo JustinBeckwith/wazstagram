@@ -84,6 +84,8 @@ io.sockets.on('connection', function (socket) {
     socket.on('setCity', function (data) {
         logger.info('new connection: ' + data.city);
         var cachedData = redisClient.lrange("pics", 0, 99);
+        console.log("GETTTING CACHED DATA!");
+        console.log(redisClient.llen("pics"));
         if (cachedData) {
             for (var i = 0; i < cachedData.length; i++) {
                 socket.emit('newPic', JSON.parse(cachedData[i]));
@@ -118,7 +120,7 @@ function cachePic(data, city) {
     // // keep the universe queue down to 10 as well
     // if (picCache[universe].length > 150)
     //     picCache[universe].shift();
-
+    console.log("CACHING DATA!!!!")
     redisClient.lpush("pics", JSON.stringify(data));
     redisClient.ltrim("pics", 0, 100);
 }
