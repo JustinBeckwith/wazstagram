@@ -73,11 +73,11 @@ io.configure(function () {
 io.sockets.on('connection', function (socket) {
     socket.on('setCity', function (data) {
         logger.info('new connection: ' + data.city);
-        if (picCache[data.city]) {
-            for (var i = 0; i < picCache[data.city].length; i++) {
-                socket.emit('newPic', picCache[data.city][i]);
-            }
-        }
+        // if (picCache[data.city]) {
+        //     for (var i = 0; i < picCache[data.city].length; i++) {
+        //         socket.emit('newPic', picCache[data.city][i]);
+        //     }
+        // }
         socket.join(data.city);
     });
 });
@@ -85,7 +85,7 @@ io.sockets.on('connection', function (socket) {
 // poll service bus for new pictures
 function publishImage(message) {        
     logger.info('new pic published from: ' + message.city);
-    cachePic(message.pic, message.city);    
+    //cachePic(message.pic, message.city);    
     io.sockets.in (message.city).emit('newPic', message.pic);
     io.sockets.in (universe).emit('newPic', message.pic);
 }

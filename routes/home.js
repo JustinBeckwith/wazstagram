@@ -4,7 +4,6 @@ module.exports = function (app, nconf, logger, publishFunc) {
 
     // render all messages from one city
 	app.get('/:city?', function (req, res) {
-        console.log('test');
         res.render('index', { city: req.params.city || 'universe' });
     }); 
 
