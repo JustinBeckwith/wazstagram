@@ -88,7 +88,7 @@ io.sockets.on('connection', function (socket) {
             console.log("LENGTH OF AWESOME ARRAY: " + pics.length);
             if (pics) {
                 for (var i = 0; i < pics.length; i++) {
-                    socket.emit('newPic', JSON.parse(pics[i]));
+                    socket.emit('newPic', pics[i]);
                 }
             }
             socket.join(data.city);
