@@ -18,6 +18,7 @@ var express = require('express')
 nconf.argv().env().file('keys.json');
 var stName = nconf.get('AZURE_STORAGE_NAME');
 var stKey = nconf.get('AZURE_STORAGE_KEY');
+var redisUrl = "redis://redistogo-appharbor:553eee0ecf0a87501f5c67cb4302fc55@angler.redistogo.com:9313/";
 
 // set up a single instance of a winston logger, writing to azure table storage
 var logger = new (winston.Logger)({
