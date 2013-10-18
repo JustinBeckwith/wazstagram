@@ -95,7 +95,7 @@ io.sockets.on('connection', function (socket) {
             }
             socket.join(data.city);
         });
-        //socket.join(data.city);
+        socket.join(data.city);
     });
 });
 
