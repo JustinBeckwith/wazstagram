@@ -209,13 +209,3 @@ The whole point of writing this code for me was to explore building performant a
 
 ## Questions?
 If you have any questions, feel free to submit an issue here, or find me [@JustinBeckwith](https://twitter.com/JustinBeckwith)
-
-
-
-
-
-
-
-
-
-
