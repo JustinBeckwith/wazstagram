@@ -1,11 +1,12 @@
 var request = require('request');
 
-module.exports = function (app, nconf, serviceBusService, logger) {
+module.exports = function (app, nconf, logger, publishFunc) {
 
-    // home page
-    app.get('/', function (req, res) {
-        res.render('index', { title: 'Home Page.  ' })
-    });
+    // render all messages from one city
+	app.get('/:city?', function (req, res) {
+        console.log('test');
+        res.render('index', { city: req.params.city || 'universe' });
+    }); 
 
     // instagram get
     app.get('/newimage/:city', function (req, res) {
@@ -22,6 +23,7 @@ module.exports = function (app, nconf, serviceBusService, logger) {
     var minIds = new Object();
 
     app.post('/newimage/:city', function (req, res) {
+        console.log(req.body);
         var data = req.body;
         logger.info(data);
         data.forEach(function (img) {
@@ -57,17 +59,9 @@ module.exports = function (app, nconf, serviceBusService, logger) {
                             var pic = {
                                 city: req.params.city,
                                 pic: b
-                            }
-                            var message = {
-                                body: JSON.stringify(pic)
-                            };
-                            serviceBusService.sendTopicMessage('wazages', message, function (error) {
-                                if (error) {
-                                    logger.error('error sending message to topic!', error);
-                                } else {
-                                    logger.info('message sent!');
-                                }
-                            })
+                            }                            
+                            
+                            publishFunc.call(this, pic);
                         }
                     } else {
                         logger.error("ERROR::getMedia:: " + data.meta.error_message);
@@ -78,3 +72,4 @@ module.exports = function (app, nconf, serviceBusService, logger) {
         res.end();
     });
 }
+

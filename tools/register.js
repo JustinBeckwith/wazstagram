@@ -6,6 +6,8 @@ var cities = require("../cities").cities,
 
 nconf.argv().env().file('../keys.json');
 
+var i=0;
+
 cities.forEach(function (city) {
     
     var options = {
@@ -19,17 +21,23 @@ cities.forEach(function (city) {
         "callback_url": util.format(nconf.get("subscriptionCallbackUrl"), city.name)
     }    
 
-    request('https://api.instagram.com/v1/subscriptions/', 
-        { 
-            "form": options, 
-            "method": "post" 
-        }, function (err, response, body) {
-            
-            if (err) {
-                console.log('ERROR! ' + err);
-            }
-            console.log(body);            
-        });
+    console.log(options.callback_url);
+
+    setTimeout((function() {
+        request('https://api.instagram.com/v1/subscriptions/', 
+            { 
+                "form": options, 
+                "method": "post" 
+            }, function (err, response, body) {
+                
+                if (err) {
+                    console.log('ERROR! ' + err);
+                }
+                console.log(body);            
+            });
+    }), i*1000);
+
+    i++;
 
 });
 
