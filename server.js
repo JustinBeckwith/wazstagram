@@ -47,6 +47,7 @@ app.use(bodyParser.json());
 app.use(function(req, res, next) {
     res.locals.nconf = nconf;
     res.locals.logger = logger;
+    res.locals.publishFunc = publishImage;
     next();
 });
 app.use('/', routes)
