@@ -6,6 +6,7 @@ var path = require('path');
 var morgan = require('morgan');
 var routes = require('./routes/home');
 var winston = require('winston');
+var bodyParser = require('body-parser');
 //var skywriter = require('winston-skywriter').Skywriter;
 
 // read in keys and secrets.  You can store these in a variety of ways.  I like to use a keys.json 
@@ -42,6 +43,7 @@ app.set('view engine', 'ejs');
 app.use(morgan('dev'));
 app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json());
 app.use(function(req, res, next) {
     res.locals.nconf = nconf;
     res.locals.logger = logger;

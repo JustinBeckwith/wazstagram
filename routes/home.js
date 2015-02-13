@@ -23,15 +23,12 @@ var minIds = new Object();
 
 // when a new city is posted from instagram
 router.post('/newimage/:city', function (req, res) {
-    console.log(req.body);
     var data = req.body;
     var nconf = res.locals.nconf;
     var logger = res.locals.logger;
-    console.log('nconf: ' + nconf + "; logger: " + logger);
-
-    logger.info(data);
+    logger.info('nconf: ' + nconf + "; logger: " + logger);
+    logger.info("data: " + data);
     data.forEach(function (img) {
-        console.log('nconf: ' + nconf + "; logger: " + logger);
         var lastId = minIds[req.params.city];
 
         var url = "https://api.instagram.com/v1/geographies/" + img.object_id + "/media/recent?client_id=" + nconf.get('instagramClientId');
