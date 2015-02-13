@@ -27,7 +27,7 @@ router.post('/newimage/:city', function (req, res) {
     var nconf = res.locals.nconf;
     var logger = res.locals.logger;
     var publishFunc = res.locals.publishFunc;
-    logger.info('nconf: ' + nconf + "; logger: " + logger + "; publishFunc:" publishFunc);
+    logger.info('nconf: ' + nconf + "; logger: " + logger + "; publishFunc:" + publishFunc);
     logger.info("data: " + data);
     data.forEach(function (img) {
         var lastId = minIds[req.params.city];
