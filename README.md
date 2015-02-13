@@ -1,39 +1,39 @@
 
 [![WAZSTAGRAM][2]][1]
 
-  [1]: http://wazstagram.cloudapp.net/
-  [2]: http://jbeckwith.com/wp-content/uploads/2013/01/waz-logo.png (View the Demo)
+  [1]: http://wazstagram.azurewebsites.net/
+  [2]: http://jbeckwith.com/images/2013/01/waz-screenshot.png (View the Demo)
 
-[Wazstagram](http://wazstagram.cloudapp.net/) is a fun experiment with node.js on [Windows Azure](http://www.windowsazure.com/en-us/develop/nodejs/) and the [Instagram Realtime API](http://instagram.com/developer/realtime/).  The project uses various services in Windows Azure to create a scalable window into Instagram traffic across multiple cities.
+[Wazstagram](http://wazstagram.azurewebsites.net/) is a fun experiment with node.js on [Microsoft Azure](http://www.windowsazure.com/en-us/develop/nodejs/) and the [Instagram Realtime API](http://instagram.com/developer/realtime/).  The project uses various services in Microsoft Azure to create a scalable window into Instagram traffic across multiple cities.
 
 
 ## How does it work
-The application is written in node.js, using cloud services in Windows Azure.  A scalable set of backend nodes receive messages from the Instagram Realtime API.  Those messages are sent to the front end nodes using [Windows Azure Service Bus](http://msdn.microsoft.com/en-us/library/hh690929.aspx).  The front end nodes are running node.js with [express](http://expressjs.com/) and [socket.io](http://socket.io/). 
+The application is written in node.js, using cloud services in Microsoft Azure.  A scalable set of backend nodes receive messages from the Instagram Realtime API.  Those messages are sent to the front end nodes using [Microsoft Azure Service Bus](http://msdn.microsoft.com/en-us/library/hh690929.aspx).  The front end nodes are running node.js with [express](http://expressjs.com/) and [socket.io](http://socket.io/). 
 
 ![WAZSTAGRAM Architecture](http://jbeckwith.com/wp-content/uploads/2013/01/architecture.png "WAZSTAGRAM Architecture")
 
 ## Websites, and Virtual Machines, and Cloud Services, Oh My!
 
-One of the first things you need to grok when using Windows Azure is the different options you have for your runtimes.  Windows Azure supports three distinct models, which can be mixed and matched depending on what you're trying to accomplish:
+One of the first things you need to grok when using Microsoft Azure is the different options you have for your runtimes.  Microsoft Azure supports three distinct models, which can be mixed and matched depending on what you're trying to accomplish:
 
 #### Websites
-[Websites](http://www.windowsazure.com/en-us/home/scenarios/web-sites/) in Windows Azure match a traditional PaaS model, when compared to something like Heroku or AppHarbor.  They work with node.js, asp.net, and php.  There is a free tier.  You can use git to deploy, and they offer various scaling options.  For an example of a real time node.js site that works well in the Website model, check out my [TwitterMap](https://github.com/JustinBeckwith/TwitterMap) example.  I chose not to use Websites for this project because a.) websockets are currently not supported in our Website model, and b.) I want to be able to scale my back end processes independently of the front end processes.  If you don't have crazy enterprise architecture or scaling needs, Websites work great.
+[Websites](http://www.windowsazure.com/en-us/home/scenarios/web-sites/) in Microsoft Azure match a traditional PaaS model, when compared to something like Heroku or AppHarbor.  They work with node.js, asp.net, and php.  There is a free tier.  You can use git to deploy, and they offer various scaling options.  For an example of a real time node.js site that works well in the Website model, check out my [TwitterMap](https://github.com/JustinBeckwith/TwitterMap) example.  I chose not to use Websites for this project because a.) websockets are currently not supported in our Website model, and b.) I want to be able to scale my back end processes independently of the front end processes.  If you don't have crazy enterprise architecture or scaling needs, Websites work great.
 
 #### Virtual Machines
-The [Virtual Machine](http://www.windowsazure.com/en-us/home/scenarios/virtual-machines/) story in Windows Azure is pretty consistent with IaaS offerings in other clouds.  You stand up a VM, you install an OS you like (yes, [we support linux](http://www.windowsazure.com/en-us/manage/linux/)), and you take on the management of the host.  This didn't sound like a lot of fun to me because I can't be trusted to install patches on my OS, and do other maintainency things.  
+The [Virtual Machine](http://www.windowsazure.com/en-us/home/scenarios/virtual-machines/) story in Microsoft Azure is pretty consistent with IaaS offerings in other clouds.  You stand up a VM, you install an OS you like (yes, [we support linux](http://www.windowsazure.com/en-us/manage/linux/)), and you take on the management of the host.  This didn't sound like a lot of fun to me because I can't be trusted to install patches on my OS, and do other maintainency things.  
 
 #### Cloud Services
-[Cloud Services](http://www.windowsazure.com/en-us/manage/services/cloud-services/) in Windows Azure are kind of a different animal.  They provide a full Virtual Machine that is stateless - that means you never know when the VM is going to go away, and a new one will appear in it's place.  It's interesting because it means you have to architect your app to not depend on stateful system resources pretty much from the start.  It's great for new apps that you're writing to be scalable.  The best part is that the OS is patched automagically, so there's no OS maintenance.  I chose this model because a.) we have some large scale needs, b.) we want separation of conerns with our worker nodes and web nodes, and c.) I can't be bothered to maintain my own VMs.
+[Cloud Services](http://www.windowsazure.com/en-us/manage/services/cloud-services/) in Microsoft Azure are kind of a different animal.  They provide a full Virtual Machine that is stateless - that means you never know when the VM is going to go away, and a new one will appear in it's place.  It's interesting because it means you have to architect your app to not depend on stateful system resources pretty much from the start.  It's great for new apps that you're writing to be scalable.  The best part is that the OS is patched automagically, so there's no OS maintenance.  I chose this model because a.) we have some large scale needs, b.) we want separation of conerns with our worker nodes and web nodes, and c.) I can't be bothered to maintain my own VMs.
 
 ## Getting Started
-After picking your runtime model, the next thing you'll need is some tools.  Before we move ahead, you'll need to [sign up for an account](http://www.windowsazure.com/en-us/pricing/free-trial/).  Next, get the command line tools.  Windows Azure is a little different because we support two types of command line tools:
+After picking your runtime model, the next thing you'll need is some tools.  Before we move ahead, you'll need to [sign up for an account](http://www.windowsazure.com/en-us/pricing/free-trial/).  Next, get the command line tools.  Microsoft Azure is a little different because we support two types of command line tools:
 
 - [PowerShell Cmdlets](http://www.windowsazure.com/en-us/develop/nodejs/how-to-guides/powershell-cmdlets/): these are great if you're on Windows and dig the PowerShell thing.
 - [X-Platform CLI](http://www.windowsazure.com/en-us/manage/linux/other-resources/command-line-tools/):  this tool is interesting because it's written in node, and is available as a node module.  You can actually just `npm install -g azure-cli` and start using this right away.  It looks awesome, though I wish they had kept the flames that were in the first version. 
 
 ![X-Plat CLI](http://jbeckwith.com/wp-content/uploads/2013/01/cli.png "X-Plat CLI")
 
-For this project, I chose to use the PowerShell cmdlets.  I went down this path because the Cloud Services stuff is not currently supported by the X-Platform CLI (I'm hoping this changes).  If you're on MacOS and want to use Cloud Services, you should check out [git-azure](https://github.com/tjanczuk/git-azure).   To bootstrap the project, I pretty much followed the ['Build a Node.js Chat Application with Socket.IO on a Windows Azure Cloud Service' tutorial](http://www.windowsazure.com/en-us/develop/nodejs/tutorials/app-using-socketio/).  This will get all of your scaffolding set up.
+For this project, I chose to use the PowerShell cmdlets.  I went down this path because the Cloud Services stuff is not currently supported by the X-Platform CLI (I'm hoping this changes).  If you're on MacOS and want to use Cloud Services, you should check out [git-azure](https://github.com/tjanczuk/git-azure).   To bootstrap the project, I pretty much followed the ['Build a Node.js Chat Application with Socket.IO on a Microsoft Azure Cloud Service' tutorial](http://www.windowsazure.com/en-us/develop/nodejs/tutorials/app-using-socketio/).  This will get all of your scaffolding set up.
 
 ### My node.js editor - WebMatrix 2
 After using the PowerShell cmdlets to scaffold my site, I used [Microsoft WebMatrix](http://www.microsoft.com/web/webmatrix/) to do the majority of the work.  I am very biased towards WebMatrix, as I helped [build the node.js experience](http://jbeckwith.com/2012/06/07/node-js-meet-webmatrix-2/) in it last year.  In a nutshell, it's rad because it has a lot of good editors, and just works.  Oh, and it has IntelliSense for everything:
@@ -41,8 +41,8 @@ After using the PowerShell cmdlets to scaffold my site, I used [Microsoft WebMat
 ![I <3 WebMatrix](http://jbeckwith.com/wp-content/uploads/2013/01/webmatrix.png "WebMatrix FTW")
 
 
-### Install the Windows Azure NPM module
-The [azure npm module](https://npmjs.org/package/azure) provides the basis for all of the Windows Azure stuff we're going to do with node.js.  It includes all of the support for using blobs, tables, service bus, and service management.  It's even [open source](https://github.com/WindowsAzure/azure-sdk-for-node/).  To get it, you just need to cd into the directory you're using and run this command:
+### Install the Microsoft Azure NPM module
+The [azure npm module](https://npmjs.org/package/azure) provides the basis for all of the Microsoft Azure stuff we're going to do with node.js.  It includes all of the support for using blobs, tables, service bus, and service management.  It's even [open source](https://github.com/WindowsAzure/azure-sdk-for-node/).  To get it, you just need to cd into the directory you're using and run this command:
 
 `npm install azure`
 
@@ -56,7 +56,7 @@ The [backend](https://github.com/JustinBeckwith/wazstagram/tree/master/backend) 
 
 1. ##### Use [nconf](https://github.com/flatiron/nconf) to store secrets.  Look at the .gitignore.
 
-	If you're going to build a site like this, you are going to need to store a few secrets.  The backend includes things like the Instagram API key, my Windows Azure Storage account key, and my Service Bus keys.  I create a keys.json file to store this, though you could add it to the environment.  I include an example of this file with the project.  **DO NOT CHECK THIS FILE INTO GITHUB!**  Seriously, [don't do that](https://github.com/blog/1390-secrets-in-the-code).  Also, pay **close attention** to my [.gitignore file](https://github.com/JustinBeckwith/wazstagram/blob/master/.gitignore).  You don't want to check in any *.cspkg or *.csx files, as they contain archived versions of your site that are generated while running the emulator and deploying.  Those archives contain your keys.json file.  That having been said - nconf does makes it really easy to read stuff from your config:
+	If you're going to build a site like this, you are going to need to store a few secrets.  The backend includes things like the Instagram API key, my Microsoft Azure Storage account key, and my Service Bus keys.  I create a keys.json file to store this, though you could add it to the environment.  I include an example of this file with the project.  **DO NOT CHECK THIS FILE INTO GITHUB!**  Seriously, [don't do that](https://github.com/blog/1390-secrets-in-the-code).  Also, pay **close attention** to my [.gitignore file](https://github.com/JustinBeckwith/wazstagram/blob/master/.gitignore).  You don't want to check in any *.cspkg or *.csx files, as they contain archived versions of your site that are generated while running the emulator and deploying.  Those archives contain your keys.json file.  That having been said - nconf does makes it really easy to read stuff from your config:
 
 	```javascript
 	// read in keys and secrets
@@ -89,7 +89,7 @@ The [backend](https://github.com/JustinBeckwith/wazstagram/tree/master/backend) 
 
 3. ##### Use [Service Bus](http://msdn.microsoft.com/en-us/library/ee732537.aspx) - it's pub/sub (+) a basket of kittens.
 
-	[Service Bus](http://msdn.microsoft.com/en-us/library/ee732537.aspx) is Windows Azure's swiss army knife of messaging.  I usually use it in the places where I would otherwise use the PubSub features of Redis.  It does all kinds of neat things like [PubSub](http://www.windowsazure.com/en-us/develop/net/how-to-guides/service-bus-topics/), [Durable Queues](http://msdn.microsoft.com/en-us/library/windowsazure/hh767287.aspx), and more recently [Notification Hubs](https://channel9.msdn.com/Blogs/Subscribe/Service-Bus-Notification-Hubs-Code-Walkthrough-Windows-8-Edition).   I use the topic subscription model to create a single channel for messages.  Each worker node publishes messages to a single topic.  Each web node creates a subscription to that topic, and polls for messages.  There's great [support for Service Bus](http://www.windowsazure.com/en-us/develop/nodejs/how-to-guides/service-bus-topics/) in the [Windows Azure Node.js SDK](https://github.com/WindowsAzure/azure-sdk-for-node).  
+	[Service Bus](http://msdn.microsoft.com/en-us/library/ee732537.aspx) is Microsoft Azure's swiss army knife of messaging.  I usually use it in the places where I would otherwise use the PubSub features of Redis.  It does all kinds of neat things like [PubSub](http://www.windowsazure.com/en-us/develop/net/how-to-guides/service-bus-topics/), [Durable Queues](http://msdn.microsoft.com/en-us/library/windowsazure/hh767287.aspx), and more recently [Notification Hubs](https://channel9.msdn.com/Blogs/Subscribe/Service-Bus-Notification-Hubs-Code-Walkthrough-Windows-8-Edition).   I use the topic subscription model to create a single channel for messages.  Each worker node publishes messages to a single topic.  Each web node creates a subscription to that topic, and polls for messages.  There's great [support for Service Bus](http://www.windowsazure.com/en-us/develop/nodejs/how-to-guides/service-bus-topics/) in the [Microsoft Azure Node.js SDK](https://github.com/WindowsAzure/azure-sdk-for-node).  
 
 	To get the basic implementation set up, just follow the [Service Bus Node.js guide](http://www.windowsazure.com/en-us/develop/nodejs/how-to-guides/service-bus-topics/). The interesting part of my use of Service Bus is the subscription clean up.  Each new front end node that connects to the topic creates it's own subscription.  As we scale out and add a new front end node, it creates another subscription.  This is a durable object in Service bus that hangs around after the connection from one end goes away (this is a feature).  To make sure sure you don't leave random subscriptions lying around, you need to do a little cleanup:
 
