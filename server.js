@@ -6,6 +6,7 @@ var path = require('path');
 var morgan = require('morgan');
 var routes = require('./routes/home');
 var winston = require('winston');
+//var skywriter = require('winston-skywriter').Skywriter;
 
 // read in keys and secrets.  You can store these in a variety of ways.  I like to use a keys.json 
 // file that is in the .gitignore file, but you can also store them in the env
@@ -18,13 +19,13 @@ var logger = new (winston.Logger)({
     transports: [
         new (winston.transports.Console)()
         // new (winston.transports.Skywriter)({ 
-        //     account: stName,
+        //     account: stName, 
         //     key: stKey,
         //     partition: require('os').hostname() + ':' + process.pid
         // })
     ]
 });
-logger.info('Started wazstagram frontend process');;
+logger.info('Started wazstagram frontend process');
 
 // configure service bus
 var picCache = new Object();
