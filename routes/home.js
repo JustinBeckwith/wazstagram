@@ -10,7 +10,7 @@ router.get('/:city?', function (req, res) {
 // instagram get
 router.get('/newimage/:city', function (req, res) {
     //   http://your-callback.com/url/?hub.mode=subscribe&hub.challenge=15f7d1a91c1f40f8a748fd134752feb3&hub.verify_token=myVerifyToken
-
+    var logger = res.locals.logger;
     logger.info(req.params.city);
     logger.info(req.query['hub.challenge']);
     logger.info(req.query['hub.mode']);

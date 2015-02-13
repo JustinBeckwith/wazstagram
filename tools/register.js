@@ -22,6 +22,7 @@ cities.forEach(function (city) {
     }    
 
     console.log(options.callback_url);
+    console.log(options);
 
     setTimeout((function() {
         request('https://api.instagram.com/v1/subscriptions/', 
