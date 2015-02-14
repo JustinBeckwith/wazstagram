@@ -107,7 +107,8 @@ io.sockets.on('connection', function (socket) {
             }
             logger.info("cache length: " + picCache.length);
             for (var i = 0; i < picCache.length; i++) {
-                socket.emit('newPic', picCache[i]);
+                logger.info("PIC: " + picCache[i].toString());
+                socket.emit('newPic', picCache[i].toString());
             }
             socket.join(data.city);
         });
