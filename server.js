@@ -8,6 +8,7 @@ var routes = require('./routes/home');
 var winston = require('winston');
 var bodyParser = require('body-parser');
 var redis = require('redis');
+var util = require('util');
 //var skywriter = require('winston-skywriter').Skywriter;
 
 // read in keys and secrets.  You can store these in a variety of ways.  I like to use a keys.json 
@@ -121,8 +122,14 @@ io.sockets.on('connection', function (socket) {
 // listen to new images from redis pub/sub
 redisSubClient.on('message', function(channel, message) {
     logger.info('channel: ' + channel + " ; message: " + message);
-    io.sockets.in (message.city).emit('newPic', message.pic);
-    io.sockets.in (universe).emit('newPic', message.pic);
+    var pic = message.toString();
+    logger.info(pic);
+    console.log(util.inspect(pic, true));
+    logger.info(JSON.parse(pic));
+    logger.info(require('util').inspect(JSON.parse(pic)));
+    //logger.info(require('util').inspect(message));
+    io.sockets.in (message.city).emit('newPic', pic.pic);
+    io.sockets.in (universe).emit('newPic', pic.pic);
 }).subscribe('pics');
 
 // send an event to redis letting all clients know there
@@ -130,7 +137,7 @@ redisSubClient.on('message', function(channel, message) {
 function publishImage(message) {        
     logger.info('new pic published from: ' + message.city);
     //cachePic(message.pic, message.city);
-    redisPubClient.publish('pics', message);
+    redisPubClient.publish('pics', JSON.stringify(message));
 }
 
 

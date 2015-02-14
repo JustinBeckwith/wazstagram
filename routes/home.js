@@ -49,7 +49,7 @@ router.post('/newimage/:city', function (req, res) {
                     logger.error("ERROR:getMedia::\n" + b);
                 }
 
-                if (data.meta.code == 200) {
+                if (data && data.meta && data.meta.code == 200) {
 
                     if (data.data && data.data.length > 0) {
                         var lastId = data.data[0].id;
