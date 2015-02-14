@@ -125,9 +125,9 @@ redisSubClient.on('message', function(channel, message) {
 
 // send an event to redis letting all clients know there
 // is a new image available
-function publishImage(message) {        
+function publishImage(message) {
     logger.info('new pic published from: ' + message.city);
-    logger.info(message.pic.data);
+    logger.info(message.pic);
     redisPubClient.publish('pics', JSON.stringify(message));
 
     // cache results to ensure users get an initial blast of (n) images per city
