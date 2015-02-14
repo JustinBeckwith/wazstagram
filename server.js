@@ -30,7 +30,7 @@ var logger = new (winston.Logger)({
 logger.info('Started wazstagram frontend process');
 
 function createRedisClient() {
-    var redisPubClient = redis.createClient(
+    return redis.createClient(
         6379,
         nconf.get('redisHost'), 
         {
@@ -42,17 +42,6 @@ function createRedisClient() {
     });    
 }
 
-// set up redis connection
-var redisSubClient = redis.createClient(
-    6379,
-    nconf.get('redisHost'), 
-    {
-        auth_pass: nconf.get('redisKey'), 
-        return_buffers: true
-    }
-).on("error", function (err) {
-    logger.error("Error connecting to redis: " + err);
-});
 var redisSubClient = createRedisClient();
 var redisPubClient = createRedisClient();
 
