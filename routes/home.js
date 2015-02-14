@@ -1,5 +1,6 @@
 var request = require('request');
 var express = require('express');
+
 var router = express.Router();
 
 // render all messages from one city
@@ -27,16 +28,13 @@ router.post('/newimage/:city', function (req, res) {
     var nconf = res.locals.nconf;
     var logger = res.locals.logger;
     var publishFunc = res.locals.publishFunc;
-    logger.info('nconf: ' + nconf + "; logger: " + logger + "; publishFunc:" + publishFunc);
     logger.info("data: " + data);
     data.forEach(function (img) {
         var lastId = minIds[req.params.city];
-
         var url = "https://api.instagram.com/v1/geographies/" + img.object_id + "/media/recent?client_id=" + nconf.get('instagramClientId');
         if (lastId) {
             url += "&min_id=" + lastId;
         }
-
         logger.info(url);
         request(url, function (e, r, b) {
             if (e && e != '') {

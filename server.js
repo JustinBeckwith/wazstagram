@@ -7,6 +7,7 @@ var morgan = require('morgan');
 var routes = require('./routes/home');
 var winston = require('winston');
 var bodyParser = require('body-parser');
+var redis = require('redis');
 //var skywriter = require('winston-skywriter').Skywriter;
 
 // read in keys and secrets.  You can store these in a variety of ways.  I like to use a keys.json 
@@ -27,6 +28,18 @@ var logger = new (winston.Logger)({
     ]
 });
 logger.info('Started wazstagram frontend process');
+
+// set up redis connection
+var redisClient = redis.createClient(
+    6379,
+    nconf.get('redisHost'), 
+    {
+        auth_pass: nconf.get('redisKey'), 
+        return_buffers: true
+    }
+).on("error", function (err) {
+    logger.err("Error connecting to redis: " + err);
+});
 
 // configure service bus
 var picCache = new Object();
@@ -81,11 +94,11 @@ app.use(function(err, req, res, next) {
     res.end();
 });
 
-
+// start socket.io server
 var server = http.createServer(app);
 var io = require('socket.io').listen(server);
 server.listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+  logger.info('Express server listening on port ' + app.get('port'));
 });
 
 
@@ -101,13 +114,22 @@ io.sockets.on('connection', function (socket) {
     });
 });
 
-// poll service bus for new pictures
-function publishImage(message) {        
-    logger.info('new pic published from: ' + message.city);
-    cachePic(message.pic, message.city);    
+// listen to new images from redis pub/sub
+redisClient.on('message', function(channel, message) {
+    logger.info('channel: ' + channel + " ; message: " + message);
     io.sockets.in (message.city).emit('newPic', message.pic);
     io.sockets.in (universe).emit('newPic', message.pic);
+}).subscribe('pics');
+
+// send an event to redis letting all clients know there
+// is a new image available
+function publishImage(message) {        
+    logger.info('new pic published from: ' + message.city);
+    //cachePic(message.pic, message.city);
+    redisClient.publish('pics', message);
 }
+
+
 
 // ensures users get an initial blast of 10 images per city
 function cachePic(data, city) {
