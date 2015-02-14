@@ -98,13 +98,17 @@ server.listen(app.get('port'), function(){
 io.sockets.on('connection', function (socket) {
     socket.on('setCity', function (data) {
         logger.info('new connection: ' + data.city);
-        var picCache = redisPubClient.lrange(data.city, 0, 100)
-        console.log(picCache.length);
-        for (var i = 0; i < picCache.length; i++) {
-            console.log(picCache[i]);
-            socket.emit('newPic', picCache[i]);
-        }
-        socket.join(data.city);
+        redisPubClient.lrange(data.city, 0, 100, function(err, picCache) {
+            if (err) {
+                logger.error(err);
+                return;
+            }
+            logger.info("cache length: " + picCache.length);
+            for (var i = 0; i < picCache.length; i++) {
+                socket.emit('newPic', picCache[i]);
+            }
+            socket.join(data.city);
+        });
     });
 });
 
