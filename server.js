@@ -122,14 +122,9 @@ io.sockets.on('connection', function (socket) {
 // listen to new images from redis pub/sub
 redisSubClient.on('message', function(channel, message) {
     logger.info('channel: ' + channel + " ; message: " + message);
-    var pic = message.toString();
-    logger.info(pic);
-    console.log(util.inspect(pic, true));
-    logger.info(JSON.parse(pic));
-    logger.info(require('util').inspect(JSON.parse(pic)));
-    //logger.info(require('util').inspect(message));
-    io.sockets.in (message.city).emit('newPic', pic.pic);
-    io.sockets.in (universe).emit('newPic', pic.pic);
+    var m = JSON.parse(message.toString());
+    io.sockets.in (m.city).emit('newPic', m.pic);
+    io.sockets.in (universe).emit('newPic', m.pic);
 }).subscribe('pics');
 
 // send an event to redis letting all clients know there
@@ -139,8 +134,6 @@ function publishImage(message) {
     //cachePic(message.pic, message.city);
     redisPubClient.publish('pics', JSON.stringify(message));
 }
-
-
 
 // ensures users get an initial blast of 10 images per city
 function cachePic(data, city) {
