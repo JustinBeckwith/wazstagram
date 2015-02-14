@@ -29,8 +29,21 @@ var logger = new (winston.Logger)({
 });
 logger.info('Started wazstagram frontend process');
 
+function createRedisClient() {
+    var redisPubClient = redis.createClient(
+        6379,
+        nconf.get('redisHost'), 
+        {
+            auth_pass: nconf.get('redisKey'), 
+            return_buffers: true
+        }
+    ).on("error", function (err) {
+        logger.error("Error connecting to redis: " + err);
+    });    
+}
+
 // set up redis connection
-var redisClient = redis.createClient(
+var redisSubClient = redis.createClient(
     6379,
     nconf.get('redisHost'), 
     {
@@ -40,6 +53,8 @@ var redisClient = redis.createClient(
 ).on("error", function (err) {
     logger.error("Error connecting to redis: " + err);
 });
+var redisSubClient = createRedisClient();
+var redisPubClient = createRedisClient();
 
 // configure service bus
 var picCache = new Object();
@@ -115,7 +130,7 @@ io.sockets.on('connection', function (socket) {
 });
 
 // listen to new images from redis pub/sub
-redisClient.on('message', function(channel, message) {
+redisSubClient.on('message', function(channel, message) {
     logger.info('channel: ' + channel + " ; message: " + message);
     io.sockets.in (message.city).emit('newPic', message.pic);
     io.sockets.in (universe).emit('newPic', message.pic);
@@ -126,7 +141,7 @@ redisClient.on('message', function(channel, message) {
 function publishImage(message) {        
     logger.info('new pic published from: ' + message.city);
     //cachePic(message.pic, message.city);
-    redisClient.publish('pics', message);
+    redisPubClient.publish('pics', message);
 }
 
 
