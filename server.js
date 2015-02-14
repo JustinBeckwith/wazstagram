@@ -38,7 +38,7 @@ var redisClient = redis.createClient(
         return_buffers: true
     }
 ).on("error", function (err) {
-    logger.err("Error connecting to redis: " + err);
+    logger.error("Error connecting to redis: " + err);
 });
 
 // configure service bus
