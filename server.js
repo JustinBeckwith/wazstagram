@@ -9,23 +9,15 @@ var winston = require('winston');
 var bodyParser = require('body-parser');
 var redis = require('redis');
 var util = require('util');
-//var skywriter = require('winston-skywriter').Skywriter;
 
 // read in keys and secrets.  You can store these in a variety of ways.  I like to use a keys.json 
 // file that is in the .gitignore file, but you can also store them in the env
 nconf.argv().env().file('keys.json');
-var stName = nconf.get('AZURE_STORAGE_NAME');
-var stKey = nconf.get('AZURE_STORAGE_KEY');
 
-// set up a single instance of a winston logger, writing to azure table storage
+// set up a single instance of a winston logger
 var logger = new (winston.Logger)({
     transports: [
         new (winston.transports.Console)()
-        // new (winston.transports.Skywriter)({ 
-        //     account: stName, 
-        //     key: stKey,
-        //     partition: require('os').hostname() + ':' + process.pid
-        // })
     ]
 });
 logger.info('Started wazstagram frontend process');
@@ -43,13 +35,9 @@ function createRedisClient() {
     });    
 }
 
+// create redis clients for the publisher and the subscriber
 var redisSubClient = createRedisClient();
 var redisPubClient = createRedisClient();
-
-// configure service bus
-var picCache = new Object();
-var universe = "universe";
-picCache[universe] = [];
 
 // configure the web server
 var app = express();
@@ -110,10 +98,11 @@ server.listen(app.get('port'), function(){
 io.sockets.on('connection', function (socket) {
     socket.on('setCity', function (data) {
         logger.info('new connection: ' + data.city);
-        if (picCache[data.city]) {
-            for (var i = 0; i < picCache[data.city].length; i++) {
-                socket.emit('newPic', picCache[data.city][i]);
-            }
+        var picCache = redisPubClient.lrange(data.city, 0, 100)
+        console.log(picCache.length);
+        for (var i = 0; i < picCache.length; i++) {
+            console.log(picCache[i]);
+            socket.emit('newPic', picCache[i]);
         }
         socket.join(data.city);
     });
@@ -131,27 +120,16 @@ redisSubClient.on('message', function(channel, message) {
 // is a new image available
 function publishImage(message) {        
     logger.info('new pic published from: ' + message.city);
-    //cachePic(message.pic, message.city);
+    cachePic(message.pic, message.city);
     redisPubClient.publish('pics', JSON.stringify(message));
 }
 
-// ensures users get an initial blast of 10 images per city
+// ensures users get an initial blast of (n) images per city
 function cachePic(data, city) {
-    // initialize the cache if it doesn't exist
-    if (!picCache[city])
-        picCache[city] = [];
-
-    // add the picture to the end of the queue for the city and universe
-    picCache[city].push(data);
-    picCache[universe].push(data);
-
-    // only allow 10 items in the queue per city
-    if (picCache[city].length > 150)
-        picCache[city].shift();
-
-    // keep the universe queue down to 10 as well
-    if (picCache[universe].length > 150)
-        picCache[universe].shift();
+    redisPubClient.lpush(city, data);
+    redisPubClient.ltrim(city, 0, 100);
+    redisPubClient.lpush('universe', data);
+    redisPubClient.ltrim('universe', 0, 100);
 }
 
 module.exports = app;
