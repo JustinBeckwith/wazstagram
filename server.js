@@ -14,6 +14,8 @@ var util = require('util');
 // file that is in the .gitignore file, but you can also store them in the env
 nconf.argv().env().file('keys.json');
 
+var universe = "universe";
+
 // set up a single instance of a winston logger
 var logger = new (winston.Logger)({
     transports: [
@@ -124,16 +126,13 @@ redisSubClient.on('message', function(channel, message) {
 // is a new image available
 function publishImage(message) {        
     logger.info('new pic published from: ' + message.city);
-    cachePic(message.pic, message.city);
     redisPubClient.publish('pics', JSON.stringify(message));
-}
 
-// ensures users get an initial blast of (n) images per city
-function cachePic(data, city) {
-    redisPubClient.lpush(city, data);
-    redisPubClient.ltrim(city, 0, 100);
-    redisPubClient.lpush('universe', data);
-    redisPubClient.ltrim('universe', 0, 100);
+    // cache results to ensure users get an initial blast of (n) images per city
+    redisPubClient.lpush(message.city, message.pic);
+    redisPubClient.ltrim(message.city, 0, 100);
+    redisPubClient.lpush(universe, message.pic);
+    redisPubClient.ltrim(universe, 0, 100);
 }
 
 module.exports = app;
