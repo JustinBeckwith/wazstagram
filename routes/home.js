@@ -28,7 +28,7 @@ router.post('/newimage/:city', function (req, res) {
     var nconf = res.locals.nconf;
     var logger = res.locals.logger;
     var publishFunc = res.locals.publishFunc;
-    logger.info("data: " + data);
+    logger.verbose("data: " + data);
     data.forEach(function (img) {
         var lastId = minIds[req.params.city];
         var url = "https://api.instagram.com/v1/geographies/" + img.object_id + "/media/recent?client_id=" + nconf.get('instagramClientId');

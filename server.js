@@ -31,7 +31,7 @@ function createRedisClient() {
             return_buffers: true
         }
     ).on("error", function (err) {
-        logger.error("Error connecting to redis: " + err);
+        logger.error("ERR:REDIS: " + err);
     });    
 }
 
@@ -110,7 +110,7 @@ io.sockets.on('connection', function (socket) {
 
 // listen to new images from redis pub/sub
 redisSubClient.on('message', function(channel, message) {
-    logger.info('channel: ' + channel + " ; message: " + message);
+    logger.verbose('channel: ' + channel + " ; message: " + message);
     var m = JSON.parse(message.toString());
     io.sockets.in (m.city).emit('newPic', m.pic);
     io.sockets.in (universe).emit('newPic', m.pic);
