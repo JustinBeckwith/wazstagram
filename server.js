@@ -106,8 +106,7 @@ io.sockets.on('connection', function (socket) {
                 return;
             }
             logger.info("cache length: " + picCache.length);
-            for (var i = 0; i < picCache.length; i++) {
-                logger.info("PIC: " + JSON.parse(picCache[i].toString()).data[0].link);
+            for (var i = picCache.length-1; i >= 0; i--) {
                 socket.emit('newPic', picCache[i].toString());
             }
             socket.join(data.city);
@@ -126,8 +125,8 @@ redisSubClient.on('message', function(channel, message) {
 // send an event to redis letting all clients know there
 // is a new image available
 function publishImage(message) {
-    logger.info('new pic published from: ' + message.city);
-    logger.info(message.pic);
+    logger.verbose('new pic published from: ' + message.city);
+    logger.verbose(message.pic);
     redisPubClient.publish('pics', JSON.stringify(message));
 
     // cache results to ensure users get an initial blast of (n) images per city
