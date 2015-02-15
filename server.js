@@ -22,7 +22,7 @@ var logger = new (winston.Logger)({
         new (winston.transports.Console)()
     ]
 });
-logger.info('Started wazstagram frontend process');
+logger.info(`Started wazstagram running on ${process.title} ${process.version}`);
 
 function createRedisClient() {
     return redis.createClient(
