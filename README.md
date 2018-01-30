@@ -8,6 +8,8 @@
 
 
 ## How does it work
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/JustinBeckwith/wazstagram.svg)](https://greenkeeper.io/)
 The application is written in node.js, using cloud services in Microsoft Azure.  A scalable set of backend nodes receive messages from the Instagram Realtime API.  Those messages are sent to the front end nodes using [Microsoft Azure Service Bus](http://msdn.microsoft.com/en-us/library/hh690929.aspx).  The front end nodes are running node.js with [express](http://expressjs.com/) and [socket.io](http://socket.io/). 
 
 ![WAZSTAGRAM Architecture](http://jbeckwith.com/wp-content/uploads/2013/01/architecture.png "WAZSTAGRAM Architecture")
